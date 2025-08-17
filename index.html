@@ -76,7 +76,7 @@
             transform: translate(-50%, -50%);
             width: 300px;
             height: auto;
-            display: none; /* Placeholder cho hình ảnh nhân vật */
+            display: none;
         }
     </style>
 </head>
@@ -95,7 +95,7 @@
         // Dữ liệu game: Các cảnh, đối thoại, lựa chọn
         const scenes = {
             start: {
-                background: 'linear-gradient(to bottom, #ffcccc, #ffffff)', // Placeholder nền app hẹn hò
+                background: 'aaa.png',
                 character: 'Bạn',
                 dialogue: 'Bạn là một chàng trai cô đơn ở Trung Quốc, đang lướt app hẹn hò. Bỗng thấy profile của "Hồng Tỷ" - một chị gái quyến rũ, tự xưng là "vợ người khác" thích phiêu lưu.',
                 choices: [
@@ -104,7 +104,7 @@
                 ]
             },
             greet: {
-                background: 'linear-gradient(to bottom, #ffcccc, #ffffff)',
+                background: 'background.jpg',
                 character: 'Hồng Tỷ',
                 dialogue: 'Chào anh đẹp trai! Em là Hồng Tỷ đây. Em thích tặng quà miễn phí, chỉ cần anh mang dầu ăn hoặc trái cây đến nhà em thôi. Đến không?',
                 choices: [
@@ -114,7 +114,7 @@
                 ]
             },
             question: {
-                background: 'linear-gradient(to bottom, #ffcccc, #ffffff)',
+                background: 'background.jpg',
                 character: 'Hồng Tỷ',
                 dialogue: 'Ồ, anh hỏi gì vậy? Em chỉ muốn vui vẻ thôi. Đừng lo, em dùng filter giọng nói để bí mật nhé! Hehe.',
                 choices: [
@@ -123,7 +123,7 @@
                 ]
             },
             meet: {
-                background: 'linear-gradient(to bottom, #000000, #333333)', // Nền tối, như phòng gặp gỡ
+                background: 'background.jpg',
                 character: 'Hồng Tỷ',
                 dialogue: 'Chào anh! Phòng tối om để lãng mạn. Anh không nhận ra gì lạ chứ? *Cười khúc khích*',
                 choices: [
@@ -132,7 +132,7 @@
                 ]
             },
             reveal: {
-                background: 'linear-gradient(to bottom, #000000, #333333)',
+                background: 'background.jpg',
                 character: 'Bạn',
                 dialogue: 'Sau "cuộc gặp", bạn về nhà và thấy video của mình lan truyền trên mạng. Ủa, Hồng Tỷ là... đàn ông? Và bạn là nạn nhân thứ 1691?',
                 choices: [
@@ -141,31 +141,31 @@
                 ]
             },
             end_safe: {
-                background: 'linear-gradient(to bottom, #00ff00, #ffffff)',
+                background: 'background.jpg',
                 character: 'Kết Thúc',
                 dialogue: 'Bạn an toàn! Tránh được drama Hồng Tỷ. Hãy cẩn thận với app hẹn hò nhé!',
                 choices: []
             },
             end_police: {
-                background: 'linear-gradient(to bottom, #0000ff, #ffffff)',
+                background: 'background.jpg',
                 character: 'Kết Thúc',
                 dialogue: 'Bạn báo cảnh sát, Hồng Tỷ bị bắt. Bạn là anh hùng! Nhưng giờ mọi người biết bạn suýt bị lừa...',
                 choices: []
             },
             end_discover: {
-                background: 'linear-gradient(to bottom, #ffff00, #ffffff)',
+                background: 'background.jpg',
                 character: 'Kết Thúc',
                 dialogue: 'Bạn bật đèn: "Ơ, anh là đàn ông à?!" Hồng Tỷ: "Surprise!" Bạn chạy thoát, nhưng video vẫn bị quay.',
                 choices: []
             },
             end_bad: {
-                background: 'linear-gradient(to bottom, #ff0000, #ffffff)',
+                background: 'background.jpg',
                 character: 'Kết Thúc',
                 dialogue: 'Bạn dương tính với... drama! Giờ đi kiểm tra sức khỏe và tránh meme trên Weibo.',
                 choices: []
             },
             end_meme: {
-                background: 'linear-gradient(to bottom, #ffcc00, #ffffff)',
+                background: 'background.jpg',
                 character: 'Kết Thúc',
                 dialogue: 'Bạn trở thành meme nổi tiếng: "Tôi và dầu ăn của tôi". Ít nhất bạn kiếm được like!',
                 choices: []
@@ -176,7 +176,7 @@
 
         function loadScene(sceneKey) {
             const scene = scenes[sceneKey];
-            document.getElementById('background').style.background = scene.background;
+            document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
             document.getElementById('character-name').textContent = scene.character;
             document.getElementById('dialogue-text').textContent = scene.dialogue;
 
@@ -190,8 +190,9 @@
                 choicesDiv.appendChild(button);
             });
 
-            // Placeholder cho hình ảnh nhân vật (có thể thêm URL thực nếu có)
-            document.getElementById('character-image').style.display = 'none'; // Ẩn nếu không có hình
+            const characterImage = document.getElementById('character-image');
+            characterImage.src = '';
+            characterImage.style.display = 'none';
         }
 
         // Bắt đầu game
