@@ -13,17 +13,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
             color: #333;
+            overflow-x: hidden;
         }
         #game-container {
-            width: 800px;
-            height: 600px;
+            width: 100%;
+            max-width: 800px;
+            height: 100vh;
+            max-height: 600px;
             background-color: #fff;
             border: 2px solid #ccc;
             border-radius: 10px;
             overflow: hidden;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
         #background {
             width: 100%;
@@ -42,41 +47,75 @@
             width: 100%;
             background-color: rgba(0, 0, 0, 0.7);
             color: #fff;
-            padding: 20px;
+            padding: 1rem;
             box-sizing: border-box;
+            min-height: 25%;
         }
         #character-name {
             font-weight: bold;
-            font-size: 18px;
-            margin-bottom: 10px;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
         }
         #dialogue-text {
-            font-size: 16px;
+            font-size: 1rem;
+            line-height: 1.4;
         }
         #choices {
-            margin-top: 20px;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
         }
         .choice-button {
             background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 10px 20px;
-            margin: 5px;
+            padding: 0.75rem 1rem;
+            margin: 0.25rem 0;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 0.9rem;
             border-radius: 5px;
+            width: 100%;
+            text-align: center;
         }
         .choice-button:hover {
             background-color: #45a049;
         }
         #character-image {
             position: absolute;
-            top: 50%;
+            top: 40%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 300px;
+            max-width: 50%;
             height: auto;
             display: none;
+        }
+
+        /* Responsive adjustments for mobile */
+        @media (max-width: 600px) {
+            #game-container {
+                max-height: 100vh;
+                border-radius: 0;
+                border: none;
+            }
+            #character-name {
+                font-size: 1rem;
+            }
+            #dialogue-text {
+                font-size: 0.9rem;
+            }
+            .choice-button {
+                font-size: 0.85rem;
+                padding: 0.5rem;
+            }
+            #character-image {
+                max-width: 70%;
+                top: 35%;
+            }
+            #dialogue-box {
+                padding: 0.75rem;
+                min-height: 30%;
+            }
         }
     </style>
 </head>
