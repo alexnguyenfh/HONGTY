@@ -241,7 +241,7 @@
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.02; // âm lượng cố định
+        masterGain.gain.value = 0.005; // âm lượng cố định
         masterGain.connect(audioCtx.destination);
       } else if (audioCtx.state === 'suspended') {
         audioCtx.resume();
