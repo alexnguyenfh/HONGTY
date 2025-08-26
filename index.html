@@ -1,241 +1,356 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Drama Hồng Tỷ: Visual Novel Hài Hước</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            color: #333;
-            overflow-x: hidden;
-        }
-        #game-container {
-            width: 100%;
-            max-width: 800px;
-            height: 100vh;
-            max-height: 600px;
-            background-color: #fff;
-            border: 2px solid #ccc;
-            border-radius: 10px;
-            overflow: hidden;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        #background {
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            position: absolute;
-            top: 0;
-            left: 0;
-            opacity: 0.8;
-        }
-        #dialogue-box {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: #fff;
-            padding: 1rem;
-            box-sizing: border-box;
-            min-height: 25%;
-        }
-        #character-name {
-            font-weight: bold;
-            font-size: 1.2rem;
-            margin-bottom: 0.5rem;
-        }
-        #dialogue-text {
-            font-size: 1rem;
-            line-height: 1.4;
-        }
-        #choices {
-            margin-top: 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-        .choice-button {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 0.75rem 1rem;
-            margin: 0.25rem 0;
-            cursor: pointer;
-            font-size: 0.9rem;
-            border-radius: 5px;
-            width: 100%;
-            text-align: center;
-        }
-        .choice-button:hover {
-            background-color: #45a049;
-        }
-        #character-image {
-            position: absolute;
-            top: 40%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            max-width: 50%;
-            height: auto;
-            display: none;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Drama Hồng Tỷ: Visual Novel Hài Hước</title>
+  <style>
+    :root {
+      --accent1: #4CAF50;
+      --accent2: #3e8e41;
+      --accentHover1: #5fd470;
+      --accentHover2: #45a049;
+    }
+    * { box-sizing: border-box; }
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f0f0f0;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+      overflow-x: hidden;
+    }
+    #game-container {
+      width: 100%;
+      max-width: 800px;
+      height: 100vh;
+      max-height: 600px;
+      background-color: #fff;
+      border: 2px solid #ccc;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+    }
+    #background {
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      background-position: center;
+      position: absolute;
+      inset: 0;
+      opacity: 0.8;
+    }
+    #dialogue-box {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 1rem;
+      box-sizing: border-box;
+      min-height: 25%;
+    }
+    #character-name {
+      font-weight: bold;
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+    }
+    #dialogue-text {
+      font-size: 1rem;
+      line-height: 1.4;
+      min-height: 3rem;
+      white-space: pre-wrap;
+    }
+    #choices {
+      margin-top: 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
 
-        /* Responsive adjustments for mobile */
-        @media (max-width: 600px) {
-            #game-container {
-                max-height: 100vh;
-                border-radius: 0;
-                border: none;
-            }
-            #character-name {
-                font-size: 1rem;
-            }
-            #dialogue-text {
-                font-size: 0.9rem;
-            }
-            .choice-button {
-                font-size: 0.85rem;
-                padding: 0.5rem;
-            }
-            #character-image {
-                max-width: 70%;
-                top: 35%;
-            }
-            #dialogue-box {
-                padding: 0.75rem;
-                min-height: 30%;
-            }
-        }
-    </style>
+    /* Nút bấm đẹp + hiệu ứng */
+    .choice-button {
+      background: linear-gradient(135deg, var(--accent1), var(--accent2));
+      color: white;
+      border: none;
+      padding: 0.75rem 1rem;
+      cursor: pointer;
+      font-size: 0.95rem;
+      border-radius: 8px;
+      width: 100%;
+      text-align: center;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.2s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+      letter-spacing: 0.2px;
+    }
+    .choice-button:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, var(--accentHover1), var(--accentHover2));
+      box-shadow: 0 6px 10px rgba(0,0,0,0.25);
+    }
+    .choice-button:active {
+      transform: translateY(1px) scale(0.985);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    }
+    .choice-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      filter: grayscale(15%);
+    }
+
+    #character-image {
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 50%;
+      height: auto;
+      display: none;
+      pointer-events: none;
+    }
+
+    /* Mobile */
+    @media (max-width: 600px) {
+      #game-container {
+        max-height: 100vh;
+        border-radius: 0;
+        border: none;
+      }
+      #character-name { font-size: 1rem; }
+      #dialogue-text { font-size: 0.9rem; }
+      .choice-button {
+        font-size: 0.9rem;
+        padding: 0.6rem 0.9rem;
+      }
+      #character-image {
+        max-width: 70%;
+        top: 35%;
+      }
+      #dialogue-box {
+        padding: 0.75rem;
+        min-height: 30%;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div id="game-container">
-        <div id="background"></div>
-        <img id="character-image" src="" alt="Character">
-        <div id="dialogue-box">
-            <div id="character-name"></div>
-            <div id="dialogue-text"></div>
-            <div id="choices"></div>
-        </div>
+  <div id="game-container">
+    <div id="background"></div>
+    <img id="character-image" src="" alt="Character"/>
+    <div id="dialogue-box">
+      <div id="character-name"></div>
+      <div id="dialogue-text"></div>
+      <div id="choices"></div>
     </div>
+  </div>
 
-    <script>
-        // Dữ liệu game: Các cảnh, đối thoại, lựa chọn
-        const scenes = {
-            start: {
-                background: 'canh0.png',
-                character: 'Bạn',
-                dialogue: 'Bạn là một chàng trai cô đơn ở Trung Quốc, đang lướt app hẹn hò. Bỗng thấy profile của "Hồng Tỷ" - một chị gái quyến rũ, tự xưng là "vợ người khác" thích phiêu lưu.',
-                choices: [
-                    { text: 'Nhắn tin chào hỏi', next: 'greet' },
-                    { text: 'Bỏ qua, nghi ngờ lừa đảo', next: 'end_safe' }
-                ]
-            },
-            greet: {
-                background: 'canh1.png',
-                character: 'Hồng Tỷ',
-                dialogue: 'Chào anh đẹp trai! Em là Hồng Tỷ đây. Em thích tặng quà miễn phí, chỉ cần anh mang dầu ăn hoặc trái cây đến nhà em thôi. Đến không?',
-                choices: [
-                    { text: 'Đồng ý, mang dầu ăn đi gặp', next: 'meet' },
-                    { text: 'Hỏi thêm chi tiết', next: 'question' },
-                    { text: 'Từ chối, nghe lạ quá', next: 'end_safe' }
-                ]
-            },
-            question: {
-                background: 'canh2.png',
-                character: 'Hồng Tỷ',
-                dialogue: 'Ồ, anh hỏi gì vậy? Em chỉ muốn vui vẻ thôi. Đừng lo, em dùng filter giọng nói để bí mật nhé! Hehe.',
-                choices: [
-                    { text: 'Vẫn đi gặp', next: 'meet' },
-                    { text: 'Báo cảnh sát', next: 'end_police' }
-                ]
-            },
-            meet: {
-                background: 'canh3.png',
-                character: 'Hồng Tỷ',
-                dialogue: 'Chào anh! Phòng tối om để lãng mạn. Anh không nhận ra gì lạ chứ? *Cười khúc khích*',
-                choices: [
-                    { text: 'Tiếp tục, không sao', next: 'reveal' },
-                    { text: 'Bật đèn kiểm tra', next: 'end_discover' }
-                ]
-            },
-            reveal: {
-                background: 'canh11.png',
-                character: 'Bạn',
-                dialogue: 'Sau "cuộc gặp", bạn về nhà và thấy video của mình lan truyền trên mạng. Ủa, Hồng Tỷ là... đàn ông? Và bạn là nạn nhân thứ 1691?',
-                choices: [
-                    { text: 'Khóc lóc, kiểm tra sức khỏe', next: 'end_bad' },
-                    { text: 'Cười trừ, thành meme nổi tiếng', next: 'end_meme' }
-                ]
-            },
-            end_safe: {
-                background: 'canh6.png',
-                character: 'Kết Thúc',
-                dialogue: 'Bạn an toàn! Tránh được drama Hồng Tỷ. Hãy cẩn thận với app hẹn hò nhé!',
-                choices: []
-            },
-            end_police: {
-                background: 'canh8.png',
-                character: 'Kết Thúc',
-                dialogue: 'Bạn báo cảnh sát, Hồng Tỷ bị bắt. Bạn là anh hùng! Nhưng giờ mọi người biết bạn suýt bị lừa...',
-                choices: []
-            },
-            end_discover: {
-                background: 'canh4.png',
-                character: 'Kết Thúc',
-                dialogue: 'Bạn bật đèn: "Ơ, anh là đàn ông à?!" Hồng Tỷ: "Surprise!" Bạn chạy thoát, nhưng video vẫn bị quay.',
-                choices: []
-            },
-            end_bad: {
-                background: 'canh10.png',
-                character: 'Kết Thúc',
-                dialogue: 'Bạn dương tính với... drama! Giờ đi kiểm tra sức khỏe và tránh meme trên Weibo.',
-                choices: []
-            },
-            end_meme: {
-                background: 'canh7.png',
-                character: 'Kết Thúc',
-                dialogue: 'Bạn trở thành meme nổi tiếng: "Tôi và dầu ăn của tôi". Ít nhất bạn kiếm được like!',
-                choices: []
-            }
-        };
+  <script>
+    // =================== DỮ LIỆU CẢNH (đầy đủ) ===================
+    const scenes = {
+      start: {
+        background: 'canh0.png',
+        character: 'Bạn',
+        dialogue: 'Bạn là một chàng trai cô đơn ở Trung Quốc, đang lướt app hẹn hò. Bỗng thấy profile của "Hồng Tỷ" - một chị gái quyến rũ, tự xưng là "vợ người khác" thích phiêu lưu.',
+        choices: [
+          { text: 'Nhắn tin chào hỏi', next: 'greet' },
+          { text: 'Bỏ qua, nghi ngờ lừa đảo', next: 'end_safe' }
+        ]
+      },
+      greet: {
+        background: 'canh1.png',
+        character: 'Hồng Tỷ',
+        dialogue: 'Chào anh đẹp trai! Em là Hồng Tỷ đây. Em thích tặng quà miễn phí, chỉ cần anh mang dầu ăn hoặc trái cây đến nhà em thôi. Đến không?',
+        choices: [
+          { text: 'Đồng ý, mang dầu ăn đi gặp', next: 'meet' },
+          { text: 'Hỏi thêm chi tiết', next: 'question' },
+          { text: 'Từ chối, nghe lạ quá', next: 'end_safe' }
+        ]
+      },
+      question: {
+        background: 'canh2.png',
+        character: 'Hồng Tỷ',
+        dialogue: 'Ồ, anh hỏi gì vậy? Em chỉ muốn vui vẻ thôi. Đừng lo, em dùng filter giọng nói để bí mật nhé! Hehe.',
+        choices: [
+          { text: 'Vẫn đi gặp', next: 'meet' },
+          { text: 'Báo cảnh sát', next: 'end_police' }
+        ]
+      },
+      meet: {
+        background: 'canh3.png',
+        character: 'Hồng Tỷ',
+        dialogue: 'Chào anh! Phòng tối om để lãng mạn. Anh không nhận ra gì lạ chứ? *Cười khúc khích*',
+        choices: [
+          { text: 'Tiếp tục, không sao', next: 'reveal' },
+          { text: 'Bật đèn kiểm tra', next: 'end_discover' }
+        ]
+      },
+      reveal: {
+        background: 'canh11.png',
+        character: 'Bạn',
+        dialogue: 'Sau "cuộc gặp", bạn về nhà và thấy video của mình lan truyền trên mạng. Ủa, Hồng Tỷ là... đàn ông? Và bạn là nạn nhân thứ 1691?',
+        choices: [
+          { text: 'Khóc lóc, kiểm tra sức khỏe', next: 'end_bad' },
+          { text: 'Cười trừ, thành meme nổi tiếng', next: 'end_meme' }
+        ]
+      },
+      end_safe: {
+        background: 'canh6.png',
+        character: 'Kết Thúc',
+        dialogue: 'Bạn an toàn! Tránh được drama Hồng Tỷ. Hãy cẩn thận với app hẹn hò nhé!',
+        choices: []
+      },
+      end_police: {
+        background: 'canh8.png',
+        character: 'Kết Thúc',
+        dialogue: 'Bạn báo cảnh sát, Hồng Tỷ bị bắt. Bạn là anh hùng! Nhưng giờ mọi người biết bạn suýt bị lừa...',
+        choices: []
+      },
+      end_discover: {
+        background: 'canh4.png',
+        character: 'Kết Thúc',
+        dialogue: 'Bạn bật đèn: "Ơ, anh là đàn ông à?!" Hồng Tỷ: "Surprise!" Bạn chạy thoát, nhưng video vẫn bị quay.',
+        choices: []
+      },
+      end_bad: {
+        background: 'canh10.png',
+        character: 'Kết Thúc',
+        dialogue: 'Bạn dương tính với... drama! Giờ đi kiểm tra sức khỏe và tránh meme trên Weibo.',
+        choices: []
+      },
+      end_meme: {
+        background: 'canh7.png',
+        character: 'Kết Thúc',
+        dialogue: 'Bạn trở thành meme nổi tiếng: "Tôi và dầu ăn của tôi". Ít nhất bạn kiếm được like!',
+        choices: []
+      }
+    };
 
-        let currentScene = 'start';
+    // =================== ÂM THANH GÕ (Web Audio API, không UI) ===================
+    let audioCtx = null;
+    let masterGain = null;
 
-        function loadScene(sceneKey) {
-            const scene = scenes[sceneKey];
-            document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
-            document.getElementById('character-name').textContent = scene.character;
-            document.getElementById('dialogue-text').textContent = scene.dialogue;
+    function ensureAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = 0.02; // âm lượng cố định
+        masterGain.connect(audioCtx.destination);
+      } else if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
 
-            const choicesDiv = document.getElementById('choices');
-            choicesDiv.innerHTML = '';
-            scene.choices.forEach(choice => {
-                const button = document.createElement('button');
-                button.classList.add('choice-button');
-                button.textContent = choice.text;
-                button.onclick = () => loadScene(choice.next);
-                choicesDiv.appendChild(button);
-            });
+    function playTypeClick() {
+      ensureAudioContext();
 
-            const characterImage = document.getElementById('character-image');
-            characterImage.src = '';
-            characterImage.style.display = 'none';
+      const bufferSize = 256; // burst cực ngắn
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        data[i] = (Math.random() * 2 - 1) * 0.6;
+      }
+
+      const src = audioCtx.createBufferSource();
+      src.buffer = buffer;
+
+      const gain = audioCtx.createGain();
+      const now = audioCtx.currentTime;
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.exponentialRampToValueAtTime(1.0, now + 0.002);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
+
+      src.connect(gain).connect(masterGain);
+      src.start();
+      src.stop(now + 0.05);
+    }
+
+    // Kích hoạt audio sau tương tác đầu tiên (tuân thủ autoplay policy)
+    ['pointerdown','keydown','touchstart','click'].forEach(evt => {
+      window.addEventListener(evt, () => ensureAudioContext(), { once: true });
+    });
+
+    // =================== HIỆU ỨNG ĐÁNH MÁY ===================
+    let typingTimer = null;
+    let isTyping = false;
+
+    function typeWriterEffect(text, elementId, speed = 35, soundEvery = 2) {
+      const el = document.getElementById(elementId);
+      el.textContent = '';
+      if (typingTimer) clearTimeout(typingTimer);
+      isTyping = true;
+
+      let i = 0;
+      function typing() {
+        if (i < text.length) {
+          const ch = text.charAt(i);
+          el.textContent += ch;
+
+          // Phát tiếng cho mỗi n ký tự để đỡ dày
+          if (i % soundEvery === 0 && ch !== ' ' && ch !== '\n') {
+            playTypeClick();
+          }
+
+          i++;
+          typingTimer = setTimeout(typing, speed);
+        } else {
+          isTyping = false;
         }
+      }
+      typing();
+    }
 
-        // Bắt đầu game
-        loadScene(currentScene);
-    </script>
+    // =================== RENDER CẢNH ===================
+    let currentScene = 'start';
+
+    function loadScene(sceneKey) {
+      const scene = scenes[sceneKey];
+      currentScene = sceneKey;
+
+      document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
+      document.getElementById('character-name').textContent = scene.character;
+
+      // Hiệu ứng đánh máy cho thoại
+      typeWriterEffect(scene.dialogue, 'dialogue-text', 35);
+
+      // Tạo nút chọn
+      const choicesDiv = document.getElementById('choices');
+      choicesDiv.innerHTML = '';
+      if (scene.choices && scene.choices.length) {
+        scene.choices.forEach(choice => {
+          const button = document.createElement('button');
+          button.classList.add('choice-button');
+          button.textContent = choice.text;
+          button.onclick = () => loadScene(choice.next);
+          choicesDiv.appendChild(button);
+        });
+      } else {
+        // Cảnh kết thúc: thêm nút chơi lại
+        const restart = document.createElement('button');
+        restart.className = 'choice-button';
+        restart.textContent = 'Chơi lại';
+        restart.onclick = () => loadScene('start');
+        choicesDiv.appendChild(restart);
+      }
+
+      // Ẩn ảnh nhân vật nếu dùng
+      const characterImage = document.getElementById('character-image');
+      characterImage.src = '';
+      characterImage.style.display = 'none';
+    }
+
+    // Cho phép click vào hộp thoại để kích hoạt audio (nếu cần)
+    document.getElementById('dialogue-box').addEventListener('click', ensureAudioContext);
+
+    // Bắt đầu game
+    loadScene(currentScene);
+  </script>
 </body>
 </html>
