@@ -2,29 +2,24 @@
 <html lang="vi">
 <head>
   <meta charset="UTF-8" />
-  <!-- Khóa zoom, mình chủ động scale bằng JS để giữ đúng tỉ lệ -->
+  <!-- Khóa zoom, scale chủ động bằng JS -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
   <title>Drama Hồng Tỷ: Visual Novel Hài Hước</title>
   <style>
     :root{
-      --accent1:#4CAF50;--accent2:#3e8e41;--accentHover1:#5fd470;--accentHover2:#45a049;
-      /* Kích thước gốc mobile (9:16). Đổi ở đây nếu muốn */
-      --base-w:360px; --base-h:640px;
+      --accent1:#4CAF50;--accent2:#3e8e41;
+      --accentHover1:#5fd470;--accentHover2:#45a049;
+      /* Kích thước gốc “mobile plus” */
+      --base-w:414px; --base-h:736px;
       --radius:14px;
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;background:#f0f0f0;color:#333;font-family:Arial,sans-serif;
-      display:grid;place-items:center;overflow:hidden; /* tránh scroll khi scale */
+      display:grid;place-items:center;overflow:hidden;
     }
-
-    /* Sân khấu chiếm toàn bộ viewport để căn giữa nội dung đã scale */
-    #stage{
-      width:100vw;height:100vh;display:grid;place-items:center;overflow:hidden;
-    }
-
-    /* Khung sẽ được transform: scale() để fit màn hình */
+    #stage{width:100vw;height:100vh;display:grid;place-items:center;overflow:hidden;}
     #scale-wrap{
       position:relative;width:var(--base-w);height:var(--base-h);
       transform-origin:top left;
@@ -32,24 +27,17 @@
       background:#fff;box-shadow:0 8px 22px rgba(0,0,0,.08);
       overflow:hidden;user-select:none;
     }
-
-    /* Game đúng kích thước gốc, mọi UI nằm trong đây và phóng theo scale */
     #game-container{
       position:relative;width:var(--base-w);height:var(--base-h);
       overflow:hidden;border-radius:var(--radius);
     }
-
-    #background{
-      position:absolute;inset:0;background-size:cover;background-position:center;opacity:.8;
-    }
-
+    #background{position:absolute;inset:0;background-size:cover;background-position:center;opacity:.8;}
     #dialogue-box{
       position:absolute;left:0;bottom:0;width:100%;
       background:rgba(0,0,0,.7);color:#fff;padding:1rem;min-height:25%;
     }
     #character-name{font-weight:700;font-size:1.2rem;margin-bottom:.5rem}
     #dialogue-text{font-size:1rem;line-height:1.4;min-height:3rem;white-space:pre-wrap}
-
     #choices{margin-top:.75rem;display:flex;flex-direction:column;gap:.5rem}
     .choice-button{
       background:linear-gradient(135deg,var(--accent1),var(--accent2));
@@ -65,13 +53,10 @@
     }
     .choice-button:active{transform:translateY(1px) scale(.985);box-shadow:0 2px 4px rgba(0,0,0,.2)}
     .choice-button:disabled{opacity:.6;cursor:not-allowed;filter:grayscale(15%)}
-
     #character-image{
       position:absolute;top:40%;left:50%;transform:translate(-50%,-50%);
       max-width:50%;height:auto;display:none;pointer-events:none;
     }
-
-    /* Không cần @media — mọi thứ đã scale giữ đúng tỉ lệ trên mọi màn hình */
   </style>
 </head>
 <body>
@@ -90,24 +75,16 @@
   </div>
 
   <script>
-    /************* SCALE: Fit 360x640 vào mọi màn hình, giữ tỉ lệ *************/
+    /************* SCALE: Fit 414x736 *************/
     (function(){
-      const baseW = 360, baseH = 640;
+      const baseW = 414, baseH = 736;
       const wrap = document.getElementById('scale-wrap');
-
-      function vhFix(){
-        // Fix 100vh trên mobile (ẩn/hiện thanh URL)
-        return Math.min(window.innerHeight, document.documentElement.clientHeight || window.innerHeight);
-      }
-
       function rescale(){
         const vw = window.innerWidth;
-        const vh = vhFix();
-        const scale = Math.min(vw/baseW, vh/baseH); // fit theo chiều ngắn hơn
+        const vh = Math.min(window.innerHeight, document.documentElement.clientHeight || window.innerHeight);
+        const scale = Math.min(vw/baseW, vh/baseH);
         wrap.style.transform = `scale(${scale})`;
-        document.body.style.overflow = 'hidden';
       }
-
       window.addEventListener('resize', rescale, {passive:true});
       window.addEventListener('orientationchange', rescale);
       window.addEventListener('load', rescale);
@@ -119,7 +96,7 @@
       start: {
         background: 'canh0.png',
         character: 'Bạn',
-        dialogue: 'Bạn là một chàng trai cô đơn ở Trung Quốc, đang lướt app hẹn hò. Bỗng thấy profile của "Hồng Tỷ" - một chị gái quyến rũ, tự xưng là "vợ người khác" thích phiêu lưu.',
+        dialogue: 'Bạn là một chàng trai cô đơn ở Trung Quốc, đang lướt app hẹn hò. Bỗng thấy profile của "Hồng Tỷ"...',
         choices: [
           { text: 'Nhắn tin chào hỏi', next: 'greet' },
           { text: 'Bỏ qua, nghi ngờ lừa đảo', next: 'end_safe' }
@@ -128,17 +105,17 @@
       greet: {
         background: 'canh1.png',
         character: 'Hồng Tỷ',
-        dialogue: 'Chào anh đẹp trai! Em là Hồng Tỷ đây. Em thích tặng quà miễn phí, chỉ cần anh mang dầu ăn hoặc trái cây đến nhà em thôi. Đến không?',
+        dialogue: 'Chào anh đẹp trai! Em là Hồng Tỷ đây...',
         choices: [
           { text: 'Đồng ý, mang dầu ăn đi gặp', next: 'meet' },
           { text: 'Hỏi thêm chi tiết', next: 'question' },
-          { text: 'Từ chối, nghe lạ quá', next: 'end_safe' }
+          { text: 'Từ chối', next: 'end_safe' }
         ]
       },
       question: {
         background: 'canh2.png',
         character: 'Hồng Tỷ',
-        dialogue: 'Ồ, anh hỏi gì vậy? Em chỉ muốn vui vẻ thôi. Đừng lo, em dùng filter giọng nói để bí mật nhé! Hehe.',
+        dialogue: 'Ồ, anh hỏi gì vậy? Em chỉ muốn vui vẻ thôi...',
         choices: [
           { text: 'Vẫn đi gặp', next: 'meet' },
           { text: 'Báo cảnh sát', next: 'end_police' }
@@ -147,68 +124,42 @@
       meet: {
         background: 'canh3.png',
         character: 'Hồng Tỷ',
-        dialogue: 'Chào anh! Phòng tối om để lãng mạn. Anh không nhận ra gì lạ chứ? *Cười khúc khích*',
+        dialogue: 'Chào anh! Phòng tối om để lãng mạn...',
         choices: [
-          { text: 'Tiếp tục, không sao', next: 'reveal' },
+          { text: 'Tiếp tục', next: 'reveal' },
           { text: 'Bật đèn kiểm tra', next: 'end_discover' }
         ]
       },
       reveal: {
         background: 'canh11.png',
         character: 'Bạn',
-        dialogue: 'Sau "cuộc gặp", bạn về nhà và thấy video của mình lan truyền trên mạng. Ủa, Hồng Tỷ là... đàn ông? Và bạn là nạn nhân thứ 1691?',
+        dialogue: 'Sau "cuộc gặp", bạn về nhà và thấy video lan truyền...',
         choices: [
-          { text: 'Khóc lóc, kiểm tra sức khỏe', next: 'end_bad' },
-          { text: 'Cười trừ, thành meme nổi tiếng', next: 'end_meme' }
+          { text: 'Khóc lóc', next: 'end_bad' },
+          { text: 'Cười trừ, thành meme', next: 'end_meme' }
         ]
       },
-      end_safe: {
-        background: 'canh6.png',
-        character: 'Kết Thúc',
-        dialogue: 'Bạn an toàn! Tránh được drama Hồng Tỷ. Hãy cẩn thận với app hẹn hò nhé!',
-        choices: []
-      },
-      end_police: {
-        background: 'canh8.png',
-        character: 'Kết Thúc',
-        dialogue: 'Bạn báo cảnh sát, Hồng Tỷ bị bắt. Bạn là anh hùng! Nhưng giờ mọi người biết bạn suýt bị lừa...',
-        choices: []
-      },
-      end_discover: {
-        background: 'canh4.png',
-        character: 'Kết Thúc',
-        dialogue: 'Bạn bật đèn: "Ơ, anh là đàn ông à?!" Hồng Tỷ: "Surprise!" Bạn chạy thoát, nhưng video vẫn bị quay.',
-        choices: []
-      },
-      end_bad: {
-        background: 'canh10.png',
-        character: 'Kết Thúc',
-        dialogue: 'Bạn dương tính với... drama! Giờ đi kiểm tra sức khỏe và tránh meme trên Weibo.',
-        choices: []
-      },
-      end_meme: {
-        background: 'canh7.png',
-        character: 'Kết Thúc',
-        dialogue: 'Bạn trở thành meme nổi tiếng: "Tôi và dầu ăn của tôi". Ít nhất bạn kiếm được like!',
-        choices: []
-      }
+      end_safe: { background:'canh6.png', character:'Kết Thúc', dialogue:'Bạn an toàn!', choices:[] },
+      end_police:{ background:'canh8.png', character:'Kết Thúc', dialogue:'Bạn báo cảnh sát...', choices:[] },
+      end_discover:{ background:'canh4.png', character:'Kết Thúc', dialogue:'Bạn bật đèn: "Ơ, anh là đàn ông à?!"', choices:[] },
+      end_bad:{ background:'canh10.png', character:'Kết Thúc', dialogue:'Bạn dương tính với... drama!', choices:[] },
+      end_meme:{ background:'canh7.png', character:'Kết Thúc', dialogue:'Bạn trở thành meme nổi tiếng.', choices:[] }
     };
 
-    /************* ÂM THANH GÕ (Web Audio API, không UI) *************/
+    /************* ÂM THANH GÕ (Web Audio API) *************/
     let audioCtx=null, masterGain=null;
     function ensureAudioContext(){
       if(!audioCtx){
-        audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-        masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.005; // âm lượng nhỏ, cố định
+        audioCtx=new (window.AudioContext||window.webkitAudioContext)();
+        masterGain=audioCtx.createGain(); masterGain.gain.value=0.005;
         masterGain.connect(audioCtx.destination);
-      } else if (audioCtx.state==='suspended'){ audioCtx.resume(); }
+      }else if(audioCtx.state==='suspended'){audioCtx.resume();}
     }
     function playTypeClick(){
       ensureAudioContext();
-      const bufferSize=256, buf=audioCtx.createBuffer(1,bufferSize,audioCtx.sampleRate);
+      const buf=audioCtx.createBuffer(1,256,audioCtx.sampleRate);
       const data=buf.getChannelData(0);
-      for(let i=0;i<bufferSize;i++) data[i]=(Math.random()*2-1)*0.6;
+      for(let i=0;i<256;i++) data[i]=(Math.random()*2-1)*0.6;
       const src=audioCtx.createBufferSource(); src.buffer=buf;
       const g=audioCtx.createGain(); const t=audioCtx.currentTime;
       g.gain.setValueAtTime(0.0001,t);
@@ -221,30 +172,28 @@
     });
 
     /************* HIỆU ỨNG ĐÁNH MÁY *************/
-    let typingTimer=null; let isTyping=false;
-    function typeWriterEffect(text, elementId, speed=35, soundEvery=2){
-      const el=document.getElementById(elementId);
-      el.textContent=''; if(typingTimer) clearTimeout(typingTimer); isTyping=true;
+    let typingTimer=null;
+    function typeWriterEffect(text, id, speed=35, soundEvery=2){
+      const el=document.getElementById(id); el.textContent='';
+      if(typingTimer) clearTimeout(typingTimer);
       let i=0;
       (function typing(){
         if(i<text.length){
           const ch=text.charAt(i); el.textContent+=ch;
           if(i%soundEvery===0 && ch!==' ' && ch!=='\n') playTypeClick();
-          i++; typingTimer=setTimeout(typing, speed);
-        }else{ isTyping=false; }
+          i++; typingTimer=setTimeout(typing,speed);
+        }
       })();
     }
 
-    /************* RENDER CẢNH *************/
-    let currentScene='start';
-    function loadScene(sceneKey){
-      const scene=scenes[sceneKey]; currentScene=sceneKey;
+    /************* LOAD CẢNH *************/
+    function loadScene(key){
+      const scene=scenes[key];
       document.getElementById('background').style.backgroundImage=`url('${scene.background}')`;
       document.getElementById('character-name').textContent=scene.character;
       typeWriterEffect(scene.dialogue,'dialogue-text',35);
-      const choicesDiv=document.getElementById('choices');
-      choicesDiv.innerHTML='';
-      if(scene.choices && scene.choices.length){
+      const choicesDiv=document.getElementById('choices'); choicesDiv.innerHTML='';
+      if(scene.choices.length){
         scene.choices.forEach(choice=>{
           const btn=document.createElement('button');
           btn.className='choice-button'; btn.textContent=choice.text;
@@ -256,11 +205,9 @@
         restart.className='choice-button'; restart.textContent='Chơi lại';
         restart.onclick=()=>loadScene('start'); choicesDiv.appendChild(restart);
       }
-      const characterImage=document.getElementById('character-image');
-      characterImage.src=''; characterImage.style.display='none';
+      document.getElementById('character-image').style.display='none';
     }
-    document.getElementById('dialogue-box').addEventListener('click', ensureAudioContext);
-    loadScene(currentScene);
+    loadScene('start');
   </script>
 </body>
 </html>
