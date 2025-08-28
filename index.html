@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Drama Hồng Tỷ: Visual Novel Hài Hước</title>
+
+  <!-- NHÚNG SDK Instant Games (KHÔNG bundle trong .zip) -->
+  <script src="https://connect.facebook.net/en_US/fbinstant.6.2.js"></script>
+
   <style>
     :root {
       --accent1: #4CAF50;
@@ -12,6 +16,7 @@
       --accentHover2: #45a049;
     }
     * { box-sizing: border-box; }
+    html, body { height: 100%; }
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f0f0;
@@ -24,6 +29,23 @@
       color: #333;
       overflow-x: hidden;
     }
+
+    /* Splash/loading */
+    #splash {
+      position: fixed; inset: 0;
+      background: #0b1229; color: #e2e8f0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 12px; text-align: center; z-index: 9999;
+    }
+    .bar { width: min(420px, 82vw); height: 10px; border: 1px solid rgba(255,255,255,.25); border-radius: 999px; overflow: hidden; background: rgba(255,255,255,.08); }
+    .bar > span { display: block; height: 100%; width: 0%; background: #22c55e; transition: width .2s ease; }
+    #startBtn {
+      display: none; padding: 10px 16px; border-radius: 10px; border: none; cursor: pointer;
+      background: linear-gradient(135deg, var(--accent1), var(--accent2)); color: #fff; font-weight: 700;
+      box-shadow: 0 6px 16px rgba(0,0,0,.25);
+    }
+
     #game-container {
       width: 100%;
       max-width: 800px;
@@ -37,6 +59,8 @@
       display: flex;
       flex-direction: column;
       user-select: none;
+      /* Ẩn UI cho tới khi startGameAsync resolve */
+      visibility: hidden;
     }
     #background {
       width: 100%;
@@ -75,8 +99,6 @@
       flex-direction: column;
       gap: 0.5rem;
     }
-
-    /* Nút bấm đẹp + hiệu ứng */
     .choice-button {
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
       color: white;
@@ -105,7 +127,6 @@
       cursor: not-allowed;
       filter: grayscale(15%);
     }
-
     #character-image {
       position: absolute;
       top: 40%;
@@ -116,32 +137,27 @@
       display: none;
       pointer-events: none;
     }
-
-    /* Mobile */
     @media (max-width: 600px) {
-      #game-container {
-        max-height: 100vh;
-        border-radius: 0;
-        border: none;
-      }
+      #game-container { max-height: 100vh; border-radius: 0; border: none; }
       #character-name { font-size: 1rem; }
       #dialogue-text { font-size: 0.9rem; }
-      .choice-button {
-        font-size: 0.9rem;
-        padding: 0.6rem 0.9rem;
-      }
-      #character-image {
-        max-width: 70%;
-        top: 35%;
-      }
-      #dialogue-box {
-        padding: 0.75rem;
-        min-height: 30%;
-      }
+      .choice-button { font-size: 0.9rem; padding: 0.6rem 0.9rem; }
+      #character-image { max-width: 70%; top: 35%; }
+      #dialogue-box { padding: 0.75rem; min-height: 30%; }
     }
   </style>
 </head>
 <body>
+  <!-- Splash / Loading -->
+  <div id="splash" role="status" aria-live="polite">
+    <div>Đang tải Instant Game…</div>
+    <div class="bar" aria-label="Tiến trình tải">
+      <span id="progressFill" style="width:0%"></span>
+    </div>
+    <button id="startBtn" type="button">Bắt đầu chơi</button>
+  </div>
+
+  <!-- Game -->
   <div id="game-container">
     <div id="background"></div>
     <img id="character-image" src="" alt="Character"/>
@@ -153,7 +169,7 @@
   </div>
 
   <script>
-    // =================== DỮ LIỆU CẢNH (đầy đủ) ===================
+    /********** DỮ LIỆU CẢNH **********/
     const scenes = {
       start: {
         background: 'canh0.png',
@@ -233,95 +249,59 @@
       }
     };
 
-    // =================== ÂM THANH GÕ (Web Audio API, không UI) ===================
-    let audioCtx = null;
-    let masterGain = null;
-
+    /********** AUDIO GÕ **********/
+    let audioCtx = null, masterGain = null;
     function ensureAudioContext() {
       if (!audioCtx) {
         audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         masterGain = audioCtx.createGain();
-        masterGain.gain.value = 0.005; // âm lượng cố định
+        masterGain.gain.value = 0.005;
         masterGain.connect(audioCtx.destination);
       } else if (audioCtx.state === 'suspended') {
         audioCtx.resume();
       }
     }
-
     function playTypeClick() {
       ensureAudioContext();
-
-      const bufferSize = 256; // burst cực ngắn
+      const bufferSize = 256;
       const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
       const data = buffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        data[i] = (Math.random() * 2 - 1) * 0.6;
-      }
-
-      const src = audioCtx.createBufferSource();
-      src.buffer = buffer;
-
-      const gain = audioCtx.createGain();
-      const now = audioCtx.currentTime;
+      for (let i = 0; i < bufferSize; i++) data[i] = (Math.random()*2 - 1) * 0.6;
+      const src = audioCtx.createBufferSource(); src.buffer = buffer;
+      const gain = audioCtx.createGain(); const now = audioCtx.currentTime;
       gain.gain.setValueAtTime(0.0001, now);
       gain.gain.exponentialRampToValueAtTime(1.0, now + 0.002);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
-
-      src.connect(gain).connect(masterGain);
-      src.start();
-      src.stop(now + 0.05);
+      src.connect(gain).connect(masterGain); src.start(); src.stop(now + 0.05);
     }
-
-    // Kích hoạt audio sau tương tác đầu tiên (tuân thủ autoplay policy)
     ['pointerdown','keydown','touchstart','click'].forEach(evt => {
       window.addEventListener(evt, () => ensureAudioContext(), { once: true });
     });
 
-    // =================== HIỆU ỨNG ĐÁNH MÁY ===================
+    /********** TYPEWRITER **********/
     let typingTimer = null;
-    let isTyping = false;
-
     function typeWriterEffect(text, elementId, speed = 35, soundEvery = 2) {
       const el = document.getElementById(elementId);
       el.textContent = '';
       if (typingTimer) clearTimeout(typingTimer);
-      isTyping = true;
-
       let i = 0;
-      function typing() {
+      (function typing() {
         if (i < text.length) {
           const ch = text.charAt(i);
           el.textContent += ch;
-
-          // Phát tiếng cho mỗi n ký tự để đỡ dày
-          if (i % soundEvery === 0 && ch !== ' ' && ch !== '\n') {
-            playTypeClick();
-          }
-
-          i++;
-          typingTimer = setTimeout(typing, speed);
-        } else {
-          isTyping = false;
+          if (i % soundEvery === 0 && ch !== ' ' && ch !== '\n') playTypeClick();
+          i++; typingTimer = setTimeout(typing, speed);
         }
-      }
-      typing();
+      })();
     }
 
-    // =================== RENDER CẢNH ===================
-    let currentScene = 'start';
-
+    /********** RENDER CẢNH **********/
     function loadScene(sceneKey) {
       const scene = scenes[sceneKey];
-      currentScene = sceneKey;
-
-      // SỬA CÚ PHÁP Ở ĐÂY: phải dùng template string + url('...')
       document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
       document.getElementById('character-name').textContent = scene.character;
-
-      // Hiệu ứng đánh máy cho thoại
       typeWriterEffect(scene.dialogue, 'dialogue-text', 35);
 
-      // Tạo nút chọn
       const choicesDiv = document.getElementById('choices');
       choicesDiv.innerHTML = '';
       if (scene.choices && scene.choices.length) {
@@ -333,25 +313,75 @@
           choicesDiv.appendChild(button);
         });
       } else {
-        // Cảnh kết thúc: thêm nút chơi lại
         const restart = document.createElement('button');
         restart.className = 'choice-button';
         restart.textContent = 'Chơi lại';
         restart.onclick = () => loadScene('start');
         choicesDiv.appendChild(restart);
       }
+    }
 
-      // Ẩn ảnh nhân vật nếu dùng
-      const characterImage = document.getElementById('character-image');
-      characterImage.src = '';
-      characterImage.style.display = 'none';
+    /********** INSTANT GAMES FLOW **********/
+    const progressFill = document.getElementById('progressFill');
+    const splash = document.getElementById('splash');
+    const startBtn = document.getElementById('startBtn');
+    const assets = [
+      // Tải những ảnh nền đang dùng để cập nhật tiến trình
+      'canh0.png','canh1.png','canh2.png','canh3.png','canh4.png','canh6.png','canh7.png','canh8.png','canh10.png','canh11.png'
+    ];
+
+    function setProgress(pct){ progressFill.style.width = Math.max(0, Math.min(100, pct)) + '%'; }
+
+    async function bootIG() {
+      const hasFBInstant = typeof FBInstant !== 'undefined';
+
+      // 1) initializeAsync
+      if (hasFBInstant) {
+        await FBInstant.initializeAsync();
+      }
+
+      // 2) Tải asset + báo tiến độ
+      for (let i = 0; i < assets.length; i++) {
+        try { await fetch(assets[i], { cache: 'force-cache' }); } catch (e) {}
+        const pct = Math.round(((i + 1) / assets.length) * 100);
+        setProgress(pct);
+        if (hasFBInstant) FBInstant.setLoadingProgress(pct);
+      }
+
+      // 3) Start game
+      if (hasFBInstant) {
+        // Yêu cầu người chơi tương tác (nút “Bắt đầu chơi”) trước khi gọi startGameAsync (an toàn UX)
+        startBtn.style.display = 'inline-block';
+        startBtn.onclick = async () => {
+          await FBInstant.startGameAsync();
+
+          // LẤY THÔNG TIN (sau khi startGameAsync resolve)
+          // const contextId = FBInstant.context.getID();
+          // const contextType = FBInstant.context.getType();
+          // const playerName = FBInstant.player.getName();
+          // const playerPic  = FBInstant.player.getPhoto();
+          // const playerId   = FBInstant.player.getID();
+
+          openGame();
+        };
+      } else {
+        // Fallback dev: không có FBInstant (chạy ngoài IG) → cho vào game luôn
+        startBtn.style.display = 'inline-block';
+        startBtn.onclick = openGame;
+      }
+    }
+
+    function openGame() {
+      splash.style.display = 'none';
+      document.getElementById('game-container').style.visibility = 'visible';
+      loadScene('start');
     }
 
     // Cho phép click vào hộp thoại để kích hoạt audio (nếu cần)
     document.getElementById('dialogue-box').addEventListener('click', ensureAudioContext);
 
-    // Bắt đầu game
-    loadScene(currentScene);
+    // Boot
+    bootIG();
   </script>
 </body>
 </html>
