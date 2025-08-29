@@ -12,6 +12,9 @@
       --accentHover2: #45a049;
     }
     * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+    }
     body {
       font-family: Arial, sans-serif;
       background-color: #f0f0f0;
@@ -20,37 +23,61 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
       color: #333;
-      overflow-x: hidden;
+      overflow: hidden; /* tránh scroll khi letterbox */
     }
-    #game-container {
-      width: 100%;
-      max-width: 800px;
-      height: 100vh;
-      max-height: 600px;
-      background-color: #fff;
-      border: 2px solid #ccc;
+
+    /* ====== SÂN KHẤU CHUẨN HÓA TỈ LỆ ======
+       Mặc định: 1:1 (vuông) → khung 800x800
+       Rộng hơn 16:9 → ép 16:9 → khung 1920x1080
+       Dọc hơn 1:1 → ép 2:3 → khung 800x1200
+    */
+    #stage {
+      position: relative;
+      margin: 0 auto;
+      background: #000;         /* letterbox */
+      width: min(100vw, 100vh); /* mặc định vuông */
+      aspect-ratio: 1 / 1;      /* 800x800 */
       border-radius: 10px;
       overflow: hidden;
-      position: relative;
-      display: flex;
-      flex-direction: column;
       user-select: none;
     }
+    /* Màn hình rất rộng (>=16:9): ưu tiên 16:9 */
+    @media (min-aspect-ratio: 16/9) {
+      #stage {
+        height: 100vh;
+        width: calc(100vh * (16/9));
+        aspect-ratio: 16 / 9;   /* 1920x1080 */
+        border-radius: 0;
+      }
+    }
+    /* Màn hình dọc (<=1:1): ưu tiên 2:3 */
+    @media (max-aspect-ratio: 1/1) {
+      #stage {
+        height: 100vh;
+        width: calc(100vh * (2/3));
+        aspect-ratio: 2 / 3;    /* 800x1200 */
+        border-radius: 0;
+      }
+    }
+
+    /* ====== LỚP NỘI DUNG GAME ====== */
+    #game-container {
+      position: absolute;
+      inset: 0;                 /* fill toàn bộ #stage */
+      background-color: #fff;
+    }
     #background {
-      width: 100%;
-      height: 100%;
-      background-size: cover;
-      background-position: center;
       position: absolute;
       inset: 0;
+      background-size: cover;
+      background-position: center;
       opacity: 0.8;
     }
     #dialogue-box {
       position: absolute;
-      bottom: 0;
       left: 0;
+      bottom: 0;
       width: 100%;
       background-color: rgba(0, 0, 0, 0.7);
       color: #fff;
@@ -76,7 +103,7 @@
       gap: 0.5rem;
     }
 
-    /* Nút bấm đẹp + hiệu ứng */
+    /* Nút bấm */
     .choice-button {
       background: linear-gradient(135deg, var(--accent1), var(--accent2));
       color: white;
@@ -117,46 +144,44 @@
       pointer-events: none;
     }
 
-    /* Mobile */
-    @media (max-width: 600px) {
-      #game-container {
-        max-height: 100vh;
-        border-radius: 0;
-        border: none;
-      }
+    /* Điều chỉnh nhẹ theo tỉ lệ khung */
+    @media (min-aspect-ratio: 16/9) { /* 16:9 */
+      #dialogue-box { min-height: 22%; padding: 1rem 1.2rem; }
+      #character-image { max-width: 45%; top: 42%; }
+    }
+    @media (aspect-ratio: 1/1) {      /* Vuông */
+      #dialogue-box { min-height: 28%; }
+      #character-image { max-width: 55%; top: 40%; }
+    }
+    @media (max-aspect-ratio: 1/1) {  /* 2:3 dọc */
+      #dialogue-box { min-height: 30%; padding: 0.9rem; }
+      #character-image { max-width: 70%; top: 35%; }
       #character-name { font-size: 1rem; }
-      #dialogue-text { font-size: 0.9rem; }
-      .choice-button {
-        font-size: 0.9rem;
-        padding: 0.6rem 0.9rem;
-      }
-      #character-image {
-        max-width: 70%;
-        top: 35%;
-      }
-      #dialogue-box {
-        padding: 0.75rem;
-        min-height: 30%;
-      }
+      #dialogue-text { font-size: 0.95rem; }
+      .choice-button { font-size: 0.9rem; padding: 0.6rem 0.9rem; }
     }
   </style>
 </head>
 <body>
-  <div id="game-container">
-    <div id="background"></div>
-    <img id="character-image" src="" alt="Character"/>
-    <div id="dialogue-box">
-      <div id="character-name"></div>
-      <div id="dialogue-text"></div>
-      <div id="choices"></div>
+  <!-- SÂN KHẤU (giữ tỉ lệ mục tiêu) -->
+  <div id="stage">
+    <!-- NỘI DUNG GAME -->
+    <div id="game-container">
+      <div id="background"></div>
+      <img id="character-image" src="" alt="Character"/>
+      <div id="dialogue-box">
+        <div id="character-name"></div>
+        <div id="dialogue-text"></div>
+        <div id="choices"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    // =================== DỮ LIỆU CẢNH (đầy đủ) ===================
+    // =================== DỮ LIỆU CẢNH ===================
     const scenes = {
       start: {
-        background: 'canh0.jpg',
+        background: 'canh0.png',
         character: 'Bạn',
         dialogue: 'Bạn là một chàng trai cô đơn ở Trung Quốc, đang lướt app hẹn hò. Bỗng thấy profile của "Hồng Tỷ" - một chị gái quyến rũ, tự xưng là "vợ người khác" thích phiêu lưu.',
         choices: [
@@ -165,7 +190,7 @@
         ]
       },
       greet: {
-        background: 'canh1.jpg',
+        background: 'canh1.png',
         character: 'Hồng Tỷ',
         dialogue: 'Chào anh đẹp trai! Em là Hồng Tỷ đây. Em thích tặng quà miễn phí, chỉ cần anh mang dầu ăn hoặc trái cây đến nhà em thôi. Đến không?',
         choices: [
@@ -175,7 +200,7 @@
         ]
       },
       question: {
-        background: 'canh2.jpg',
+        background: 'canh2.png',
         character: 'Hồng Tỷ',
         dialogue: 'Ồ, anh hỏi gì vậy? Em chỉ muốn vui vẻ thôi. Đừng lo, em dùng filter giọng nói để bí mật nhé! Hehe.',
         choices: [
@@ -184,7 +209,7 @@
         ]
       },
       meet: {
-        background: 'canh3.jpg',
+        background: 'canh3.png',
         character: 'Hồng Tỷ',
         dialogue: 'Chào anh! Phòng tối om để lãng mạn. Anh không nhận ra gì lạ chứ? *Cười khúc khích*',
         choices: [
@@ -193,7 +218,7 @@
         ]
       },
       reveal: {
-        background: 'canh11.jpg',
+        background: 'canh11.png',
         character: 'Bạn',
         dialogue: 'Sau "cuộc gặp", bạn về nhà và thấy video của mình lan truyền trên mạng. Ủa, Hồng Tỷ là... đàn ông? Và bạn là nạn nhân thứ 1691?',
         choices: [
@@ -202,31 +227,31 @@
         ]
       },
       end_safe: {
-        background: 'canh6.jpg',
+        background: 'canh6.png',
         character: 'Kết Thúc',
         dialogue: 'Bạn an toàn! Tránh được drama Hồng Tỷ. Hãy cẩn thận với app hẹn hò nhé!',
         choices: []
       },
       end_police: {
-        background: 'canh8.jpg',
+        background: 'canh8.png',
         character: 'Kết Thúc',
         dialogue: 'Bạn báo cảnh sát, Hồng Tỷ bị bắt. Bạn là anh hùng! Nhưng giờ mọi người biết bạn suýt bị lừa...',
         choices: []
       },
       end_discover: {
-        background: 'canh4.jpg',
+        background: 'canh4.png',
         character: 'Kết Thúc',
         dialogue: 'Bạn bật đèn: "Ơ, anh là đàn ông à?!" Hồng Tỷ: "Surprise!" Bạn chạy thoát, nhưng video vẫn bị quay.',
         choices: []
       },
       end_bad: {
-        background: 'canh10.jpg',
+        background: 'canh10.png',
         character: 'Kết Thúc',
         dialogue: 'Bạn dương tính với... drama! Giờ đi kiểm tra sức khỏe và tránh meme trên Weibo.',
         choices: []
       },
       end_meme: {
-        background: 'canh7.jpg',
+        background: 'canh7.png',
         character: 'Kết Thúc',
         dialogue: 'Bạn trở thành meme nổi tiếng: "Tôi và dầu ăn của tôi". Ít nhất bạn kiếm được like!',
         choices: []
@@ -272,7 +297,6 @@
       src.stop(now + 0.05);
     }
 
-    // Kích hoạt audio sau tương tác đầu tiên (tuân thủ autoplay policy)
     ['pointerdown','keydown','touchstart','click'].forEach(evt => {
       window.addEventListener(evt, () => ensureAudioContext(), { once: true });
     });
@@ -293,7 +317,6 @@
           const ch = text.charAt(i);
           el.textContent += ch;
 
-          // Phát tiếng cho mỗi n ký tự để đỡ dày
           if (i % soundEvery === 0 && ch !== ' ' && ch !== '\n') {
             playTypeClick();
           }
@@ -314,14 +337,11 @@
       const scene = scenes[sceneKey];
       currentScene = sceneKey;
 
-      // SỬA CÚ PHÁP Ở ĐÂY: phải dùng template string + url('...')
       document.getElementById('background').style.backgroundImage = `url('${scene.background}')`;
       document.getElementById('character-name').textContent = scene.character;
 
-      // Hiệu ứng đánh máy cho thoại
       typeWriterEffect(scene.dialogue, 'dialogue-text', 35);
 
-      // Tạo nút chọn
       const choicesDiv = document.getElementById('choices');
       choicesDiv.innerHTML = '';
       if (scene.choices && scene.choices.length) {
@@ -333,7 +353,6 @@
           choicesDiv.appendChild(button);
         });
       } else {
-        // Cảnh kết thúc: thêm nút chơi lại
         const restart = document.createElement('button');
         restart.className = 'choice-button';
         restart.textContent = 'Chơi lại';
@@ -341,18 +360,13 @@
         choicesDiv.appendChild(restart);
       }
 
-      // Ẩn ảnh nhân vật nếu dùng
       const characterImage = document.getElementById('character-image');
       characterImage.src = '';
       characterImage.style.display = 'none';
     }
 
-    // Cho phép click vào hộp thoại để kích hoạt audio (nếu cần)
-    document.getElementById('dialogue-box').addEventListener('click', ensureAudioContext);
-
-    // Bắt đầu game
+    document.getElementById('stage').addEventListener('click', ensureAudioContext);
     loadScene(currentScene);
   </script>
 </body>
 </html>
-
