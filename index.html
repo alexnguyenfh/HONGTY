@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mô Hình 3D Tràn Màn Hình</title>
+    <title>Mô Hình 3D Tràn Màn Hình Có Nhạc Nền</title>
     <style>
         /* Đảm bảo html và body chiếm toàn bộ viewport */
         html, body {
@@ -16,52 +16,92 @@
 
         body {
             font-family: Arial, sans-serif;
-            display: flex; /* Sử dụng flexbox để căn giữa hoặc sắp xếp nội dung */
-            flex-direction: column; /* Sắp xếp các mục theo chiều dọc */
-            align-items: center; /* Căn giữa các mục theo chiều ngang */
-            justify-content: center; /* Căn giữa các mục theo chiều dọc */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             background-color: #1a1a1a; /* Nền tối */
             color: #e0e0e0; /* Chữ sáng */
         }
 
         /* Ẩn tiêu đề và đoạn văn nếu không muốn chúng xuất hiện */
-        /* Nếu bạn muốn có tiêu đề hoặc văn bản, chúng sẽ cần được định vị tuyệt đối */
         h1, p {
-            display: none; /* Ẩn tiêu đề và đoạn văn bản nếu bạn muốn iframe tràn toàn bộ */
-            /* Nếu bạn muốn giữ lại, bạn cần position: absolute và z-index */
+            display: none;
         }
 
         .sketchfab-container {
             width: 100%; /* Chiếm toàn bộ chiều rộng của body */
             height: 100%; /* Chiếm toàn bộ chiều cao của body */
-            border: none; /* Bỏ viền của container */
-            box-shadow: none; /* Bỏ đổ bóng */
-            border-radius: 0; /* Bỏ bo góc */
-            overflow: hidden; /* Đảm bảo không có thanh cuộn bên trong container */
+            border: none;
+            box-shadow: none;
+            border-radius: 0;
+            overflow: hidden;
             background-color: #2b2b2b; /* Nền container tối */
-            padding: 0; /* Bỏ padding */
+            padding: 0;
             box-sizing: border-box;
         }
 
         /* Responsive iframe */
         .sketchfab-container iframe {
-            width: 100%; /* Iframe chiếm toàn bộ chiều rộng của container */
-            height: 100%; /* Iframe chiếm toàn bộ chiều cao của container */
-            border: none; /* Bỏ border mặc định của iframe */
-            display: block; /* Loại bỏ khoảng trắng bên dưới iframe */
-            /* aspect-ratio không còn cần thiết khi bạn muốn nó tràn toàn bộ */
+            width: 100%;
+            height: 100%;
+            border: none;
+            display: block;
         }
 
-        /* Media queries không còn cần thiết nhiều cho iframe nếu nó luôn là 100% width/height */
-        /* Tuy nhiên, bạn có thể giữ lại nếu muốn điều chỉnh các thành phần khác */
+        /* Nút điều khiển nhạc */
+        #music-toggle {
+            position: absolute; /* Đặt nút ở vị trí tuyệt đối */
+            top: 20px;
+            right: 20px;
+            z-index: 1000; /* Đảm bảo nút nằm trên iframe */
+            background-color: rgba(0, 188, 212, 0.7); /* Màu nền xanh ngọc, hơi trong suốt */
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            display: flex; /* Dùng flexbox để căn giữa icon/chữ */
+            align-items: center;
+            gap: 8px; /* Khoảng cách giữa icon và chữ */
+        }
+
+        #music-toggle:hover {
+            background-color: rgba(0, 188, 212, 1);
+        }
+
+        /* Biểu tượng loa (Font Awesome hoặc đơn giản) */
+        .icon-speaker::before {
+            content: '\1F50A'; /* Unicode cho biểu tượng loa có sóng (Speaker with three sound waves) */
+            font-size: 1.2em;
+        }
+        .icon-speaker.muted::before {
+            content: '\1F507'; /* Unicode cho biểu tượng loa bị tắt tiếng (Speaker with cancellation stroke) */
+        }
+
+        /* Media queries cho điện thoại */
         @media (max-width: 768px) {
-            /* Các tùy chỉnh cho điện thoại nếu có nội dung khác */
+            #music-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Xóa h1 và p nếu bạn muốn iframe tràn toàn bộ màn hình, hoặc di chuyển chúng ra ngoài .sketchfab-container và định vị tuyệt đối -->
+    <!-- Thẻ audio cho nhạc nền -->
+    <!-- `autoplay` để tự động phát, `loop` để lặp lại, `muted` để tránh bị chặn bởi trình duyệt -->
+    <audio id="background-music" src="your_background_music.mp3" autoplay loop muted></audio>
+
+    <!-- Nút bật/tắt nhạc -->
+    <button id="music-toggle" aria-label="Toggle Background Music">
+        <span class="icon-speaker muted"></span>
+        <span id="music-status">Bật Nhạc</span>
+    </button>
 
     <div class="sketchfab-container">
         <iframe title="Ffffffffffffffffffffff"
@@ -78,5 +118,63 @@
         </iframe>
     </div>
 
+    <script>
+        const backgroundMusic = document.getElementById('background-music');
+        const musicToggle = document.getElementById('music-toggle');
+        const musicStatus = document.getElementById('music-status');
+        const speakerIcon = musicToggle.querySelector('.icon-speaker');
+
+        // Khởi tạo trạng thái ban đầu của nút
+        let isMuted = backgroundMusic.muted;
+        updateToggleButton();
+
+        musicToggle.addEventListener('click', () => {
+            if (backgroundMusic.paused) {
+                // Nếu nhạc đang dừng, cố gắng phát
+                backgroundMusic.play().then(() => {
+                    isMuted = false;
+                    backgroundMusic.muted = false; // Đảm bảo bỏ tắt tiếng
+                    updateToggleButton();
+                }).catch(error => {
+                    // Xử lý lỗi nếu không thể phát (ví dụ: trình duyệt vẫn chặn)
+                    console.error("Không thể phát nhạc tự động:", error);
+                    alert("Trình duyệt của bạn có thể đang chặn tự động phát âm thanh. Vui lòng thử lại hoặc tương tác với trang.");
+                });
+            } else {
+                // Nếu nhạc đang phát, dừng hoặc tắt tiếng
+                if (isMuted) {
+                    // Nếu đang tắt tiếng, bật tiếng
+                    backgroundMusic.muted = false;
+                    isMuted = false;
+                } else {
+                    // Nếu đang bật tiếng, tắt tiếng
+                    backgroundMusic.muted = true;
+                    isMuted = true;
+                }
+                updateToggleButton();
+            }
+        });
+
+        function updateToggleButton() {
+            if (isMuted) {
+                musicStatus.textContent = 'Bật Nhạc';
+                speakerIcon.classList.add('muted');
+            } else {
+                musicStatus.textContent = 'Tắt Nhạc';
+                speakerIcon.classList.remove('muted');
+            }
+        }
+
+        // Đảm bảo nhạc phát khi trang tải xong (nếu trình duyệt cho phép)
+        // Đây là cách khắc phục cho một số trình duyệt vẫn yêu cầu user tương tác
+        // dù đã có muted.
+        window.addEventListener('load', () => {
+            backgroundMusic.play().catch(error => {
+                console.warn("Autoplay was prevented (expected for non-muted media).", error);
+                // Người dùng sẽ cần nhấp nút để bật tiếng
+            });
+        });
+
+    </script>
 </body>
 </html>
