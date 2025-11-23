@@ -22,6 +22,7 @@
             justify-content: center;
             background-color: #1a1a1a; /* Nền tối */
             color: #e0e0e0; /* Chữ sáng */
+            position: relative; /* Quan trọng cho các thanh che phủ */
         }
 
         /* Ẩn tiêu đề và đoạn văn nếu không muốn chúng xuất hiện */
@@ -39,6 +40,7 @@
             background-color: #2b2b2b; /* Nền container tối */
             padding: 0;
             box-sizing: border-box;
+            z-index: 1; /* Đảm bảo iframe nằm dưới các thanh che phủ */
         }
 
         /* Responsive iframe */
@@ -49,12 +51,38 @@
             display: block;
         }
 
-        /* Nút điều khiển nhạc */
+        /* ======================================================= */
+        /* CÁC THANH CHE PHỦ MỚI */
+        /* ======================================================= */
+        .overlay-bar {
+            position: fixed; /* Giữ vị trí cố định trên màn hình */
+            left: 0;
+            width: 100%; /* Kéo dài toàn bộ chiều rộng */
+            background-color: white; /* Màu trắng theo yêu cầu */
+            z-index: 999; /* Đảm bảo nó luôn nằm trên iframe và các nội dung khác */
+            box-sizing: border-box; /* Bao gồm padding/border vào width/height */
+        }
+
+        .top-bar {
+            top: 0; /* Đặt ở trên cùng */
+            height: 50px; /* Chiều cao của thanh trên cùng. ĐIỀU CHỈNH THEO Ý MUỐN */
+            border-bottom: 1px solid #ccc; /* Thêm đường viền mờ để phân biệt */
+        }
+
+        .bottom-bar {
+            bottom: 0; /* Đặt ở dưới cùng */
+            height: 50px; /* Chiều cao của thanh dưới cùng. ĐIỀU CHỈNH THEO Ý MUỐN */
+            border-top: 1px solid #ccc; /* Thêm đường viền mờ để phân biệt */
+        }
+
+        /* ======================================================= */
+        /* CÁC NÚT ĐIỀU KHIỂN KHÁC (ví dụ: nhạc) nếu bạn muốn giữ */
+        /* ======================================================= */
         #music-toggle {
             position: absolute; /* Đặt nút ở vị trí tuyệt đối */
-            top: 20px;
+            top: 60px; /* Đặt thấp hơn thanh trên cùng một chút */
             right: 20px;
-            z-index: 1000; /* Đảm bảo nút nằm trên iframe */
+            z-index: 1000; /* Đảm bảo nút nằm trên iframe và các thanh che phủ */
             background-color: rgba(0, 188, 212, 0.7); /* Màu nền xanh ngọc, hơi trong suốt */
             color: white;
             border: none;
@@ -62,30 +90,30 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 1em;
-            display: flex; /* Dùng flexbox để căn giữa icon/chữ */
+            display: flex;
             align-items: center;
-            gap: 8px; /* Khoảng cách giữa icon và chữ */
-            transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu khi hover */
+            gap: 8px;
+            transition: background-color 0.3s ease;
         }
 
         #music-toggle:hover {
             background-color: rgba(0, 188, 212, 1);
         }
 
-        /* Biểu tượng loa (Font Awesome hoặc đơn giản) */
-        /* Sử dụng biểu tượng Unicode để không cần thư viện bên ngoài */
         .icon-speaker::before {
-            content: '\1F50A'; /* Unicode cho biểu tượng loa có sóng (Speaker with three sound waves) */
+            content: '\1F50A';
             font-size: 1.2em;
         }
         .icon-speaker.muted::before {
-            content: '\1F507'; /* Unicode cho biểu tượng loa bị tắt tiếng (Speaker with cancellation stroke) */
+            content: '\1F507';
         }
 
-        /* Media queries cho điện thoại */
         @media (max-width: 768px) {
+            .top-bar, .bottom-bar {
+                height: 40px; /* Điều chỉnh chiều cao cho thiết bị di động */
+            }
             #music-toggle {
-                top: 10px;
+                top: 50px; /* Điều chỉnh vị trí nút nhạc */
                 right: 10px;
                 padding: 8px 12px;
                 font-size: 0.9em;
@@ -95,12 +123,21 @@
 </head>
 <body>
 
-    <!-- Thẻ audio cho nhạc nền -->
-    <!-- `autoplay` để tự động phát, `loop` để lặp lại, `muted` để tránh bị chặn bởi trình duyệt
-         LƯU Ý QUAN TRỌNG: Các trình duyệt hiện đại thường chặn `autoplay` nếu không có `muted`.
-         Người dùng sẽ cần tương tác để bật tiếng.
-         ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
+    <!-- THANH CHE PHỦ TRÊN CÙNG -->
+    <div class="overlay-bar top-bar"></div>
 
+    <!-- THANH CHE PHỦ DƯỚI CÙNG -->
+    <div class="overlay-bar bottom-bar"></div>
+
+    <!-- Thẻ audio cho nhạc nền (Đã bỏ comment nếu bạn muốn dùng lại) -->
+    <!-- ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
+    <audio id="background-music" src="your_background_music.mp3" autoplay loop muted></audio>
+
+    <!-- Nút bật/tắt nhạc (đặt lại vị trí để không bị các thanh che phủ) -->
+    <button id="music-toggle" aria-label="Toggle Background Music">
+        <span class="icon-speaker muted"></span>
+        <span id="music-status">Bật Nhạc</span>
+    </button>
 
     <div class="sketchfab-container">
         <iframe title="Ffffffffffffffffffffff"
@@ -117,5 +154,55 @@
         </iframe>
     </div>
 
+    <script>
+        const backgroundMusic = document.getElementById('background-music');
+        const musicToggle = document.getElementById('music-toggle');
+        const musicStatus = document.getElementById('music-status');
+        const speakerIcon = musicToggle.querySelector('.icon-speaker');
+
+        // Kiểm tra xem các phần tử có tồn tại trước khi truy cập
+        if (backgroundMusic && musicToggle && musicStatus && speakerIcon) {
+            let isMuted = backgroundMusic.muted;
+            updateToggleButton();
+
+            musicToggle.addEventListener('click', () => {
+                if (backgroundMusic.paused || isMuted) {
+                    backgroundMusic.muted = false;
+                    isMuted = false;
+                    backgroundMusic.play().then(() => {
+                        updateToggleButton();
+                    }).catch(error => {
+                        console.error("Không thể phát nhạc tự động:", error);
+                        alert("Trình duyệt của bạn có thể đang chặn tự động phát âm thanh. Vui lòng thử lại hoặc tương tác với trang.");
+                        backgroundMusic.muted = true;
+                        isMuted = true;
+                        updateToggleButton();
+                    });
+                } else {
+                    backgroundMusic.muted = true;
+                    isMuted = true;
+                    updateToggleButton();
+                }
+            });
+
+            function updateToggleButton() {
+                if (isMuted) {
+                    musicStatus.textContent = 'Bật Nhạc';
+                    speakerIcon.classList.add('muted');
+                } else {
+                    musicStatus.textContent = 'Tắt Nhạc';
+                    speakerIcon.classList.remove('muted');
+                }
+            }
+
+            window.addEventListener('load', () => {
+                backgroundMusic.play().catch(error => {
+                    console.warn("Autoplay was prevented (expected for non-muted media if not interacted with).", error);
+                });
+            });
+        } else {
+            console.warn("Một số phần tử nhạc không được tìm thấy. Chức năng nhạc có thể không hoạt động.");
+        }
+    </script>
 </body>
 </html>
