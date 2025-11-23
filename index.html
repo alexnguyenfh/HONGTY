@@ -65,6 +65,7 @@
             display: flex; /* Dùng flexbox để căn giữa icon/chữ */
             align-items: center;
             gap: 8px; /* Khoảng cách giữa icon và chữ */
+            transition: background-color 0.3s ease; /* Hiệu ứng chuyển màu khi hover */
         }
 
         #music-toggle:hover {
@@ -72,6 +73,7 @@
         }
 
         /* Biểu tượng loa (Font Awesome hoặc đơn giản) */
+        /* Sử dụng biểu tượng Unicode để không cần thư viện bên ngoài */
         .icon-speaker::before {
             content: '\1F50A'; /* Unicode cho biểu tượng loa có sóng (Speaker with three sound waves) */
             font-size: 1.2em;
@@ -94,14 +96,11 @@
 <body>
 
     <!-- Thẻ audio cho nhạc nền -->
-    <!-- `autoplay` để tự động phát, `loop` để lặp lại, `muted` để tránh bị chặn bởi trình duyệt -->
-    <audio id="background-music" src="your_background_music.mp3" autoplay loop muted></audio>
+    <!-- `autoplay` để tự động phát, `loop` để lặp lại, `muted` để tránh bị chặn bởi trình duyệt
+         LƯU Ý QUAN TRỌNG: Các trình duyệt hiện đại thường chặn `autoplay` nếu không có `muted`.
+         Người dùng sẽ cần tương tác để bật tiếng.
+         ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
 
-    <!-- Nút bật/tắt nhạc -->
-    <button id="music-toggle" aria-label="Toggle Background Music">
-        <span class="icon-speaker muted"></span>
-        <span id="music-status">Bật Nhạc</span>
-    </button>
 
     <div class="sketchfab-container">
         <iframe title="Ffffffffffffffffffffff"
@@ -114,67 +113,9 @@
                 execution-while-out-of-viewport
                 execution-while-not-rendered
                 web-share
-                src="https://sketchfab.com/models/82c690c8f2b44c89acc93e128b9c2914/embed?camera=0&transparent=1&ui_theme=dark">
+                src="https://sketchfab.com/models/82c690c8f2b44c89acc93e128b9c2914/embed?camera=0&transparent=1&ui_theme=dark&ui_infos=0&ui_controls=0&ui_settings=0&ui_help=0&ui_fullscreen=0&ui_annotations=0&ui_watermark=0">
         </iframe>
     </div>
 
-    <script>
-        const backgroundMusic = document.getElementById('background-music');
-        const musicToggle = document.getElementById('music-toggle');
-        const musicStatus = document.getElementById('music-status');
-        const speakerIcon = musicToggle.querySelector('.icon-speaker');
-
-        // Khởi tạo trạng thái ban đầu của nút
-        let isMuted = backgroundMusic.muted;
-        updateToggleButton();
-
-        musicToggle.addEventListener('click', () => {
-            if (backgroundMusic.paused) {
-                // Nếu nhạc đang dừng, cố gắng phát
-                backgroundMusic.play().then(() => {
-                    isMuted = false;
-                    backgroundMusic.muted = false; // Đảm bảo bỏ tắt tiếng
-                    updateToggleButton();
-                }).catch(error => {
-                    // Xử lý lỗi nếu không thể phát (ví dụ: trình duyệt vẫn chặn)
-                    console.error("Không thể phát nhạc tự động:", error);
-                    alert("Trình duyệt của bạn có thể đang chặn tự động phát âm thanh. Vui lòng thử lại hoặc tương tác với trang.");
-                });
-            } else {
-                // Nếu nhạc đang phát, dừng hoặc tắt tiếng
-                if (isMuted) {
-                    // Nếu đang tắt tiếng, bật tiếng
-                    backgroundMusic.muted = false;
-                    isMuted = false;
-                } else {
-                    // Nếu đang bật tiếng, tắt tiếng
-                    backgroundMusic.muted = true;
-                    isMuted = true;
-                }
-                updateToggleButton();
-            }
-        });
-
-        function updateToggleButton() {
-            if (isMuted) {
-                musicStatus.textContent = 'Bật Nhạc';
-                speakerIcon.classList.add('muted');
-            } else {
-                musicStatus.textContent = 'Tắt Nhạc';
-                speakerIcon.classList.remove('muted');
-            }
-        }
-
-        // Đảm bảo nhạc phát khi trang tải xong (nếu trình duyệt cho phép)
-        // Đây là cách khắc phục cho một số trình duyệt vẫn yêu cầu user tương tác
-        // dù đã có muted.
-        window.addEventListener('load', () => {
-            backgroundMusic.play().catch(error => {
-                console.warn("Autoplay was prevented (expected for non-muted media).", error);
-                // Người dùng sẽ cần nhấp nút để bật tiếng
-            });
-        });
-
-    </script>
 </body>
 </html>
