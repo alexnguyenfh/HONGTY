@@ -3,88 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mô Hình 3D Độc Đáo</title>
+    <title>Mô Hình 3D Tràn Màn Hình</title>
     <style>
+        /* Đảm bảo html và body chiếm toàn bộ viewport */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden; /* Ngăn chặn thanh cuộn xuất hiện */
+        }
+
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh; /* Đảm bảo chiều cao tối thiểu để căn giữa */
-            background-color: #1a1a1a; /* Nền tối hơn để phù hợp với ui_theme=dark */
+            display: flex; /* Sử dụng flexbox để căn giữa hoặc sắp xếp nội dung */
+            flex-direction: column; /* Sắp xếp các mục theo chiều dọc */
+            align-items: center; /* Căn giữa các mục theo chiều ngang */
+            justify-content: center; /* Căn giữa các mục theo chiều dọc */
+            background-color: #1a1a1a; /* Nền tối */
             color: #e0e0e0; /* Chữ sáng */
         }
 
-        h1 {
-            color: #00bcd4; /* Màu xanh ngọc cho tiêu đề */
-            margin-bottom: 30px;
-            text-align: center;
+        /* Ẩn tiêu đề và đoạn văn nếu không muốn chúng xuất hiện */
+        /* Nếu bạn muốn có tiêu đề hoặc văn bản, chúng sẽ cần được định vị tuyệt đối */
+        h1, p {
+            display: none; /* Ẩn tiêu đề và đoạn văn bản nếu bạn muốn iframe tràn toàn bộ */
+            /* Nếu bạn muốn giữ lại, bạn cần position: absolute và z-index */
         }
 
         .sketchfab-container {
-            width: 100%; /* Chiều rộng container 100% */
-            max-width: 1200px; /* Chiều rộng tối đa của container, tăng lên để chứa iframe lớn hơn */
-            border: 1px solid #444; /* Viền tối */
-            box-shadow: 0 8px 16px rgba(0,0,0,0.3);
-            border-radius: 8px;
-            overflow: hidden;
+            width: 100%; /* Chiếm toàn bộ chiều rộng của body */
+            height: 100%; /* Chiếm toàn bộ chiều cao của body */
+            border: none; /* Bỏ viền của container */
+            box-shadow: none; /* Bỏ đổ bóng */
+            border-radius: 0; /* Bỏ bo góc */
+            overflow: hidden; /* Đảm bảo không có thanh cuộn bên trong container */
             background-color: #2b2b2b; /* Nền container tối */
-            padding: 10px;
+            padding: 0; /* Bỏ padding */
             box-sizing: border-box;
         }
 
         /* Responsive iframe */
         .sketchfab-container iframe {
             width: 100%; /* Iframe chiếm toàn bộ chiều rộng của container */
-            /* Height sẽ được tính toán để duy trì tỷ lệ khung hình 16:9 (1920x1080) */
-            aspect-ratio: 16 / 9; /* Giữ tỷ lệ khung hình 16:9 */
-            height: auto; /* Chiều cao tự động dựa trên tỷ lệ khung hình */
-            min-height: 300px; /* Đảm bảo chiều cao tối thiểu trên màn hình nhỏ */
-            border: none;
-            display: block;
+            height: 100%; /* Iframe chiếm toàn bộ chiều cao của container */
+            border: none; /* Bỏ border mặc định của iframe */
+            display: block; /* Loại bỏ khoảng trắng bên dưới iframe */
+            /* aspect-ratio không còn cần thiết khi bạn muốn nó tràn toàn bộ */
         }
 
-        p {
-            margin-top: 20px;
-            text-align: center;
-            color: #a0a0a0;
-        }
-
-        /* Media queries cho điện thoại */
+        /* Media queries không còn cần thiết nhiều cho iframe nếu nó luôn là 100% width/height */
+        /* Tuy nhiên, bạn có thể giữ lại nếu muốn điều chỉnh các thành phần khác */
         @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            h1 {
-                font-size: 1.5em;
-                margin-bottom: 20px;
-            }
-
-            .sketchfab-container {
-                max-width: 100%;
-            }
-
-            .sketchfab-container iframe {
-                /* aspect-ratio vẫn hoạt động tốt, nhưng nếu bạn muốn chiều cao cố định thấp hơn, bạn có thể override */
-                min-height: 200px; /* Giảm chiều cao tối thiểu trên điện thoại */
-            }
-        }
-
-        /* Media queries cho máy tính bảng (nếu cần điều chỉnh cụ thể) */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .sketchfab-container iframe {
-                 min-height: 350px; /* Chiều cao tối thiểu cho máy tính bảng */
-            }
+            /* Các tùy chỉnh cho điện thoại nếu có nội dung khác */
         }
     </style>
 </head>
 <body>
 
-    <h1>Mô Hình 3D Độc Đáo Từ Sketchfab</h1>
+    <!-- Xóa h1 và p nếu bạn muốn iframe tràn toàn bộ màn hình, hoặc di chuyển chúng ra ngoài .sketchfab-container và định vị tuyệt đối -->
 
     <div class="sketchfab-container">
         <iframe title="Ffffffffffffffffffffff"
@@ -100,8 +77,6 @@
                 src="https://sketchfab.com/models/82c690c8f2b44c89acc93e128b9c2914/embed?camera=0&transparent=1&ui_theme=dark">
         </iframe>
     </div>
-
-    <p>Hãy khám phá mô hình 3D này với nền trong suốt và giao diện tối!</p>
 
 </body>
 </html>
