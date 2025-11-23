@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mô Hình 3D Tràn Màn Hình Có Nhạc Nền</title>
+    <title>Mô Hình 3D Tràn Màn Hình Với Nhạc Nền</title>
     <style>
         /* Đảm bảo html và body chiếm toàn bộ viewport */
         html, body {
@@ -52,7 +52,7 @@
         }
 
         /* ======================================================= */
-        /* CÁC THANH CHE PHỦ MỚI */
+        /* CÁC THANH CHE PHỦ */
         /* ======================================================= */
         .overlay-bar {
             position: fixed; /* Giữ vị trí cố định trên màn hình */
@@ -65,58 +65,20 @@
 
         .top-bar {
             top: 0; /* Đặt ở trên cùng */
-            height: 50px; /* Chiều cao của thanh trên cùng. ĐIỀU CHỈNH THEO Ý MUỐN */
-            border-bottom: 1px solid #ccc; /* Thêm đường viền mờ để phân biệt */
+            height: 55px; /* Chiều cao của thanh trên cùng (khoảng 110% của 50px) */
+            /* border-bottom: 1px solid #ccc; */ /* Có thể bỏ đường viền nếu muốn trơn hoàn toàn */
         }
 
         .bottom-bar {
             bottom: 0; /* Đặt ở dưới cùng */
-            height: 50px; /* Chiều cao của thanh dưới cùng. ĐIỀU CHỈNH THEO Ý MUỐN */
-            border-top: 1px solid #ccc; /* Thêm đường viền mờ để phân biệt */
+            height: 55px; /* Chiều cao của thanh dưới cùng (khoảng 110% của 50px) */
+            /* border-top: 1px solid #ccc; */ /* Có thể bỏ đường viền nếu muốn trơn hoàn toàn */
         }
 
-        /* ======================================================= */
-        /* CÁC NÚT ĐIỀU KHIỂN KHÁC (ví dụ: nhạc) nếu bạn muốn giữ */
-        /* ======================================================= */
-        #music-toggle {
-            position: absolute; /* Đặt nút ở vị trí tuyệt đối */
-            top: 60px; /* Đặt thấp hơn thanh trên cùng một chút */
-            right: 20px;
-            z-index: 1000; /* Đảm bảo nút nằm trên iframe và các thanh che phủ */
-            background-color: rgba(0, 188, 212, 0.7); /* Màu nền xanh ngọc, hơi trong suốt */
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1em;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: background-color 0.3s ease;
-        }
-
-        #music-toggle:hover {
-            background-color: rgba(0, 188, 212, 1);
-        }
-
-        .icon-speaker::before {
-            content: '\1F50A';
-            font-size: 1.2em;
-        }
-        .icon-speaker.muted::before {
-            content: '\1F507';
-        }
-
+        /* Media queries cho điện thoại */
         @media (max-width: 768px) {
             .top-bar, .bottom-bar {
-                height: 40px; /* Điều chỉnh chiều cao cho thiết bị di động */
-            }
-            #music-toggle {
-                top: 50px; /* Điều chỉnh vị trí nút nhạc */
-                right: 10px;
-                padding: 8px 12px;
-                font-size: 0.9em;
+                height: 44px; /* Điều chỉnh chiều cao cho thiết bị di động (110% của 40px) */
             }
         }
     </style>
@@ -129,15 +91,15 @@
     <!-- THANH CHE PHỦ DƯỚI CÙNG -->
     <div class="overlay-bar bottom-bar"></div>
 
-    <!-- Thẻ audio cho nhạc nền (Đã bỏ comment nếu bạn muốn dùng lại) -->
-    <!-- ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
+    <!-- Thẻ audio cho nhạc nền -->
+    <!-- `autoplay` để tự động phát, `loop` để lặp lại.
+         LƯU Ý QUAN TRỌNG: Các trình duyệt hiện đại thường chặn `autoplay` nếu không có `muted`.
+         Vì không có nút điều khiển, bạn có thể cân nhắc để `muted` hoặc không.
+         Nếu bạn bỏ `muted`, nhạc có thể không tự động phát trên nhiều trình duyệt cho đến khi người dùng tương tác với trang.
+         Để đảm bảo nhạc phát tự động tối đa, hãy giữ `muted` và người dùng sẽ cần tự bật tiếng trên thiết bị của họ.
+         ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
     <audio id="background-music" src="your_background_music.mp3" autoplay loop muted></audio>
 
-    <!-- Nút bật/tắt nhạc (đặt lại vị trí để không bị các thanh che phủ) -->
-    <button id="music-toggle" aria-label="Toggle Background Music">
-        <span class="icon-speaker muted"></span>
-        <span id="music-status">Bật Nhạc</span>
-    </button>
 
     <div class="sketchfab-container">
         <iframe title="Ffffffffffffffffffffff"
@@ -156,53 +118,18 @@
 
     <script>
         const backgroundMusic = document.getElementById('background-music');
-        const musicToggle = document.getElementById('music-toggle');
-        const musicStatus = document.getElementById('music-status');
-        const speakerIcon = musicToggle.querySelector('.icon-speaker');
 
-        // Kiểm tra xem các phần tử có tồn tại trước khi truy cập
-        if (backgroundMusic && musicToggle && musicStatus && speakerIcon) {
-            let isMuted = backgroundMusic.muted;
-            updateToggleButton();
-
-            musicToggle.addEventListener('click', () => {
-                if (backgroundMusic.paused || isMuted) {
-                    backgroundMusic.muted = false;
-                    isMuted = false;
-                    backgroundMusic.play().then(() => {
-                        updateToggleButton();
-                    }).catch(error => {
-                        console.error("Không thể phát nhạc tự động:", error);
-                        alert("Trình duyệt của bạn có thể đang chặn tự động phát âm thanh. Vui lòng thử lại hoặc tương tác với trang.");
-                        backgroundMusic.muted = true;
-                        isMuted = true;
-                        updateToggleButton();
-                    });
-                } else {
-                    backgroundMusic.muted = true;
-                    isMuted = true;
-                    updateToggleButton();
-                }
-            });
-
-            function updateToggleButton() {
-                if (isMuted) {
-                    musicStatus.textContent = 'Bật Nhạc';
-                    speakerIcon.classList.add('muted');
-                } else {
-                    musicStatus.textContent = 'Tắt Nhạc';
-                    speakerIcon.classList.remove('muted');
-                }
-            }
-
-            window.addEventListener('load', () => {
+        // Logic để đảm bảo nhạc phát tự động (nếu trình duyệt cho phép)
+        // Với `muted` ban đầu, trình duyệt thường cho phép `autoplay`.
+        // Nếu bạn bỏ `muted` trên thẻ <audio>, rất có thể nó sẽ không phát.
+        window.addEventListener('load', () => {
+            if (backgroundMusic) {
                 backgroundMusic.play().catch(error => {
-                    console.warn("Autoplay was prevented (expected for non-muted media if not interacted with).", error);
+                    console.warn("Autoplay was prevented (expected for non-muted media without user interaction).", error);
+                    // Nếu bạn muốn hiển thị thông báo cho người dùng rằng nhạc không phát, bạn có thể thêm ở đây.
                 });
-            });
-        } else {
-            console.warn("Một số phần tử nhạc không được tìm thấy. Chức năng nhạc có thể không hoạt động.");
-        }
+            }
+        });
     </script>
 </body>
 </html>
