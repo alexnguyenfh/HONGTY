@@ -41,14 +41,30 @@
             padding: 0;
             box-sizing: border-box;
             z-index: 1; /* Đảm bảo iframe nằm dưới các thanh che phủ */
+            /* Để chứa div.sketchfab-embed-wrapper mới */
+            display: flex; /* Để iframe và p nằm trong wrapper có thể được căn chỉnh */
+            flex-direction: column; /* Sắp xếp iframe và p theo chiều dọc */
         }
 
-        /* Responsive iframe */
-        .sketchfab-container iframe {
+        /* Thiết lập cho sketchfab-embed-wrapper mới */
+        .sketchfab-embed-wrapper {
             width: 100%;
-            height: 100%;
+            height: 100%; /* Sẽ được điều chỉnh để nhường chỗ cho p */
+            display: flex;
+            flex-direction: column; /* Quan trọng: để iframe và p nằm dọc */
+        }
+
+        .sketchfab-embed-wrapper iframe {
+            flex-grow: 1; /* Cho phép iframe chiếm hết không gian còn lại */
+            width: 100%;
+            height: auto; /* Để flex-grow hoạt động hiệu quả hơn */
             border: none;
             display: block;
+        }
+
+        /* Ẩn thông tin dưới iframe trong đoạn mã nhúng mới */
+        .sketchfab-embed-wrapper p {
+            display: none !important; /* Quan trọng: dùng !important để ghi đè phong cách inline của Sketchfab */
         }
 
         /* ======================================================= */
@@ -92,41 +108,39 @@
     <div class="overlay-bar bottom-bar"></div>
 
     <!-- Thẻ audio cho nhạc nền -->
-    <!-- `autoplay` để tự động phát, `loop` để lặp lại.
-         LƯU Ý QUAN TRỌNG: Các trình duyệt hiện đại thường chặn `autoplay` nếu không có `muted`.
-         Vì không có nút điều khiển, bạn có thể cân nhắc để `muted` hoặc không.
-         Nếu bạn bỏ `muted`, nhạc có thể không tự động phát trên nhiều trình duyệt cho đến khi người dùng tương tác với trang.
-         Để đảm bảo nhạc phát tự động tối đa, hãy giữ `muted` và người dùng sẽ cần tự bật tiếng trên thiết bị của họ.
-         ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
+    <!-- ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
     <audio id="background-music" src="your_background_music.mp3" autoplay loop muted></audio>
 
 
     <div class="sketchfab-container">
-        <iframe title="Ffffffffffffffffffffff"
-                frameborder="0"
-                allowfullscreen
-                mozallowfullscreen="true"
-                webkitallowfullscreen="true"
-                allow="autoplay; fullscreen; xr-spatial-tracking"
-                xr-spatial-tracking
-                execution-while-out-of-viewport
-                execution-while-not-rendered
-                web-share
-                src="https://sketchfab.com/models/82c690c8f2b44c89acc93e128b9c2914/embed?camera=0&transparent=1&ui_theme=dark&ui_infos=0&ui_controls=0&ui_settings=0&ui_help=0&ui_fullscreen=0&ui_annotations=0&ui_watermark=0">
-        </iframe>
+        <!-- ĐOẠN MÃ NHÚNG MỚI TỪ SKETCHFAB -->
+        <div class="sketchfab-embed-wrapper">
+            <iframe title="F39bccbe9e717a2d80bb8d0c7b46005e"
+                    frameborder="0"
+                    allowfullscreen
+                    mozallowfullscreen="true"
+                    webkitallowfullscreen="true"
+                    allow="autoplay; fullscreen; xr-spatial-tracking"
+                    xr-spatial-tracking
+                    execution-while-out-of-viewport
+                    execution-while-not-rendered
+                    web-share
+                    src="https://sketchfab.com/models/240f47fc6a42491f83fe6470eeae511e/embed?ui_theme=dark&ui_infos=0&ui_controls=0&ui_settings=0&ui_help=0&ui_fullscreen=0&ui_annotations=0&ui_watermark=0">
+            </iframe>
+            <!-- Thẻ p này sẽ được ẩn bằng CSS -->
+            <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
+                <a href="https://sketchfab.com/3d-models/f39bccbe9e717a2d80bb8d0c7b46005e-240f47fc6a42491f83fe6470eeae511e?utm_medium=embed&utm_campaign=share-popup&utm_content=240f47fc6a42491f83fe6470eeae511e" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> F39bccbe9e717a2d80bb8d0c7b46005e </a> by <a href="https://sketchfab.com/alex_nguyen_fh?utm_medium=embed&utm_campaign=share-popup&utm_content=240f47fc6a42491f83fe6470eeae511e" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> alex_nguyen_fh </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=240f47fc6a42491f83fe6470eeae511e" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
+            </p>
+        </div>
     </div>
 
     <script>
         const backgroundMusic = document.getElementById('background-music');
 
-        // Logic để đảm bảo nhạc phát tự động (nếu trình duyệt cho phép)
-        // Với `muted` ban đầu, trình duyệt thường cho phép `autoplay`.
-        // Nếu bạn bỏ `muted` trên thẻ <audio>, rất có thể nó sẽ không phát.
         window.addEventListener('load', () => {
             if (backgroundMusic) {
                 backgroundMusic.play().catch(error => {
-                    console.warn("Autoplay was prevented (expected for non-muted media without user interaction).", error);
-                    // Nếu bạn muốn hiển thị thông báo cho người dùng rằng nhạc không phát, bạn có thể thêm ở đây.
+                    console.warn("Autoplay was prevented (expected for muted media without user interaction).", error);
                 });
             }
         });
