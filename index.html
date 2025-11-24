@@ -109,11 +109,12 @@
 
     <!-- Thẻ audio cho nhạc nền -->
     <!-- ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
+    <!-- Thêm thuộc tính 'muted' để thử khắc phục vấn đề autoplay trên một số trình duyệt -->
     <audio id="background-music" src="your_background_music.mp3" autoplay loop muted></audio>
 
 
     <div class="sketchfab-container">
-        <!-- ĐOẠN MÃ NHÚNG MỚI TỪ SKETCHFAB -->
+        <!-- ĐOẠN MÃ NHÚNG MỚI TỪ SKETCHFAB ĐÃ ĐƯỢC THAY THẾ -->
         <div class="sketchfab-embed-wrapper">
             <iframe title="F39bccbe9e717a2d80bb8d0c7b46005e"
                     frameborder="0"
@@ -125,7 +126,7 @@
                     execution-while-out-of-viewport
                     execution-while-not-rendered
                     web-share
-                    src="https://sketchfab.com/models/240f47fc6a42491f83fe6470eeae511e/embed?ui_theme=dark&ui_infos=0&ui_controls=0&ui_settings=0&ui_help=0&ui_fullscreen=0&ui_annotations=0&ui_watermark=0">
+                    src="https://sketchfab.com/models/240f47fc6a42491f83fe6470eeae511e/embed?autostart=1&camera=0&preload=1&transparent=1&ui_theme=dark">
             </iframe>
             <!-- Thẻ p này sẽ được ẩn bằng CSS -->
             <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
@@ -139,8 +140,9 @@
 
         window.addEventListener('load', () => {
             if (backgroundMusic) {
+                // Thử phát nhạc. Do thuộc tính 'muted' đã có, nó sẽ phát mà không cần tương tác người dùng.
                 backgroundMusic.play().catch(error => {
-                    console.warn("Autoplay was prevented (expected for muted media without user interaction).", error);
+                    console.warn("Autoplay for muted media was prevented (this is unexpected, check browser policies if it persists).", error);
                 });
             }
         });
