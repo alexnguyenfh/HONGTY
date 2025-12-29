@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thư Viện Thẻ Bài AR</title>
+    <title>Thư Viện 100 Thẻ Bài AR</title>
     <style>
         /* CSS cho giao diện */
         body {
@@ -18,17 +18,6 @@
             overflow-x: hidden; /* Ngăn chặn cuộn ngang không mong muốn */
             position: relative; /* Quan trọng cho overlay */
         }
-
-        /* --- PHẦN HEADER ĐÃ BỊ XÓA --- */
-        /* .header { ... } */
-        /* .header-left { ... } */
-        /* .dropdown-icon { ... } */
-        /* .scale-control { ... } */
-        /* .scale-slider { ... } */
-        /* .scale-slider::-webkit-slider-thumb { ... } */
-        /* .scale-slider::-moz-range-thumb { ... } */
-        /* .scale-value { ... } */
-        /* .header-right { ... } */
 
         h1 {
             font-size: 28px;
@@ -134,11 +123,6 @@
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
-            /* --- PHẦN HEADER ĐÃ BỊ XÓA --- */
-            /* .header {
-                padding: 8px 15px;
-            } */
-
             h1 {
                 font-size: 24px;
                 margin-left: 15px;
@@ -160,15 +144,6 @@
             .card-description {
                 font-size: 0.65em;
             }
-
-            /* --- PHẦN HEADER ĐÃ BỊ XÓA --- */
-            /* .scale-slider {
-                width: 60px;
-            } */
-
-            /* .scale-value {
-                min-width: 35px;
-            } */
         }
 
         @media (max-width: 400px) {
@@ -314,21 +289,6 @@
     </style>
 </head>
 <body>
-    <!-- PHẦN HEADER ĐÃ BỊ XÓA -->
-    <!-- <div class="header">
-        <div class="header-left">
-            <span class="dropdown-icon">&#9660;</span>
-            <div class="scale-control">
-                <span>Scale</span>
-                <input type="range" min="0.1" max="0.5" value="0.18" step="0.01" class="scale-slider" id="scaleSlider">
-                <span class="scale-value" id="scaleValue">0.18x</span>
-            </div>
-        </div>
-        <div class="header-right">
-            <span>Play</span>
-        </div>
-    </div> -->
-
     <h1>LIBRARY</h1>
 
     <div class="card-grid-container">
@@ -350,154 +310,44 @@
 
     <script>
         // JavaScript để tạo và hiển thị thẻ bài
-        const cardData = [
-            {
-                id: 1,
-                image: 'https://via.placeholder.com/150x200/FF0000/FFFFFF?text=Card+1', // Sử dụng placeholder image
-                title: 'Card Title One',
-                description: 'This is a description for card number one. It provides some basic information about the card. It is a very important card in the game and has unique abilities that can turn the tide of battle. Use it wisely!',
-                rarity: 'Common'
-            },
-            {
-                id: 2,
-                image: 'https://via.placeholder.com/150x200/00FF00/000000?text=Card+2',
-                title: 'Mystic Warrior',
-                description: 'A fierce warrior from the enchanted forests, known for unparalleled agility and mastery of ancient combat techniques. His strikes are swift and precise, often catching enemies off guard. Legends say he can move faster than the eye can see.',
-                rarity: 'Rare'
-            },
-            {
-                id: 3,
-                image: 'https://via.placeholder.com/150x200/0000FF/FFFFFF?text=Card+3',
-                title: 'Dragon\'s Breath',
-                description: 'Unleash a devastating fiery breath upon your enemies, dealing immense area damage and leaving them engulfed in flames. This ancient spell can turn multiple foes into ash with a single cast. Its power is truly legendary.',
-                rarity: 'Epic'
-            },
-            {
-                id: 4,
-                image: 'https://via.placeholder.com/150x200/FFFF00/000000?text=Card+4',
-                title: 'Healing Potion',
-                description: 'Restores a significant amount of health to a target ally, providing crucial sustain in prolonged battles. Always keep a few of these handy for emergency situations or to keep your front-line strong.',
-                rarity: 'Common'
-            },
-            {
-                id: 5,
-                image: 'https://via.placeholder.com/150x200/FF00FF/FFFFFF?text=Card+5',
-                title: 'Shadow Assassin',
-                description: 'Strikes from the shadows with deadly precision, dealing critical damage to unsuspecting foes. Known for their stealth and ability to disappear without a trace, they are the ultimate predators. Very few can escape their clutches.',
-                rarity: 'Legendary'
-            },
-            {
-                id: 6,
-                image: 'https://via.placeholder.com/150x200/00FFFF/000000?text=Card+6',
-                title: 'Guard Captain',
-                description: 'Leads the front line with unwavering courage and robust defenses. His presence inspires allies and deters enemies. A true leader who stands firm against any threat, protecting those under his command.',
-                rarity: 'Uncommon'
-            },
-            {
-                id: 7,
-                image: 'https://via.placeholder.com/150x200/800000/FFFFFF?text=Card+7',
-                title: 'Sorcerer Supreme',
-                description: 'Wields ancient magic with devastating effects, controlling the battlefield with powerful spells and illusions. Her wisdom is as vast as her magical prowess, making her a formidable opponent and invaluable ally.',
-                rarity: 'Epic'
-            },
-            {
-                id: 8,
-                image: 'https://via.placeholder.com/150x200/008000/FFFFFF?text=Card+8',
-                title: 'Iron Golem',
-                description: 'A colossal guardian with impenetrable armor, protecting its allies from harm. Slow but incredibly resilient, the Iron Golem is a living fortress, soaking up damage that would obliterate lesser beings.',
-                rarity: 'Rare'
-            },
-            {
-                id: 9,
-                image: 'https://via.placeholder.com/150x200/000080/FFFFFF?text=Card+9',
-                title: 'Archer Elite',
-                description: 'Precise shots from a distance, never missing its mark. The Archer Elite can pick off targets with uncanny accuracy, providing crucial ranged support. Their arrows can pierce even the thickest armor.',
-                rarity: 'Uncommon'
-            },
-            {
-                id: 10,
-                image: 'https://via.placeholder.com/150x200/808000/FFFFFF?text=Card+10',
-                title: 'Time Warp',
-                description: 'Manipulates the fabric of time to gain an advantage, slowing enemies to a crawl or speeding up allies to an incredible pace. A truly strategic card that can alter the flow of battle dramatically.',
-                rarity: 'Legendary'
-            },
-            {
-                id: 11,
-                image: 'https://via.placeholder.com/150x200/800080/FFFFFF?text=Card+11',
-                title: 'Spirit Wolf',
-                description: 'A loyal companion that attacks enemies with spectral claws. Invisible to normal sight, the Spirit Wolf is a stealthy attacker, harassing foes and aiding its master in combat. Loyal to the end.',
-                rarity: 'Common'
-            },
-            {
-                id: 12,
-                image: 'https://via.placeholder.com/150x200/008080/FFFFFF?text=Card+12',
-                title: 'Flame Aura',
-                description: 'Surrounds the caster with a burning aura, continuously damaging nearby enemies. A dangerous ability that can clear out swarms of weaker foes and deter close-range attackers. Very effective in tight spaces.',
-                rarity: 'Rare'
-            },
-            // Thêm nhiều thẻ bài khác ở đây để có thanh cuộn
-            {
-                id: 13,
-                image: 'https://via.placeholder.com/150x200/C0C0C0/000000?text=Card+13',
-                title: 'Ice Shard',
-                description: 'Launches a sharp shard of ice at an enemy, freezing the target in place and dealing moderate damage. Useful for crowd control and isolating dangerous foes.',
-                rarity: 'Common'
-            },
-            {
-                id: 14,
-                image: 'https://via.placeholder.com/150x200/FFD700/000000?text=Card+14',
-                title: 'Thunder Strike',
-                description: 'Calls down a powerful lightning bolt, striking a single enemy with immense force. Can stun and deal heavy damage, making it ideal for taking down high-priority targets.',
-                rarity: 'Epic'
-            },
-            {
-                id: 15,
-                image: 'https://via.placeholder.com/150x200/32CD32/FFFFFF?text=Card+15',
-                title: 'Forest Nymph',
-                description: 'Heals and buffs allies with nature\'s magic, elusive and swift. The Forest Nymph is a supportive unit, strengthening her companions and subtly influencing the flow of battle.',
-                rarity: 'Uncommon'
-            },
-            {
-                id: 16,
-                image: 'https://via.placeholder.com/150x200/4B0082/FFFFFF?text=Card+16',
-                title: 'Void Walker',
-                description: 'Teleports across the battlefield, leaving enemies disoriented and confused. A master of spatial manipulation, the Void Walker can flank foes or escape danger with ease.',
-                rarity: 'Legendary'
-            },
-            {
-                id: 17,
-                image: 'https://via.placeholder.com/150x200/A9A9A9/000000?text=Card+17',
-                title: 'Stone Wall',
-                description: 'Summons a durable stone wall to block enemy advances and provide cover for allies. An excellent defensive card for controlling bottlenecks and protecting weaker units.',
-                rarity: 'Common'
-            },
-            {
-                id: 18,
-                image: 'https://via.placeholder.com/150x200/FF8C00/000000?text=Card+18',
-                title: 'Sun Priestess',
-                description: 'Channels divine light to smite evil and protect the innocent. Her holy magic can both damage unholy foes and provide potent healing to her devoted allies.',
-                rarity: 'Rare'
-            },
-            {
-                id: 19,
-                image: 'https://via.placeholder.com/150x200/8B0000/FFFFFF?text=Card+19',
-                title: 'Berserker Rage',
-                description: 'Enters a state of furious combat, greatly increasing attack speed and damage at the cost of defense. The Berserker is a force of pure destruction, tearing through enemies in a frenzy.',
-                rarity: 'Uncommon'
-            },
-            {
-                id: 20,
-                image: 'https://via.placeholder.com/150x200/DAA520/000000?text=Card+20',
-                title: 'Celestial Guardian',
-                description: 'A protector from the heavens, impervious to most forms of attack. The Celestial Guardian is an unyielding bulwark, standing firm against the strongest assaults with its divine shield.',
-                rarity: 'Epic'
-            }
+        const cardData = []; // Mảng rỗng để chứa dữ liệu 100 thẻ bài
+
+        const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
+        const cardTitles = [
+            'Mystic Warrior', 'Dragon\'s Breath', 'Healing Potion', 'Shadow Assassin',
+            'Guard Captain', 'Sorcerer Supreme', 'Iron Golem', 'Archer Elite',
+            'Time Warp', 'Spirit Wolf', 'Flame Aura', 'Ice Shard',
+            'Thunder Strike', 'Forest Nymph', 'Void Walker', 'Stone Wall',
+            'Sun Priestess', 'Berserker Rage', 'Celestial Guardian', 'Ancient Rune',
+            'Swift Blade', 'Earth Shield', 'Mana Burst', 'Holy Smite',
+            'Dark Pact', 'Elixir of Life', 'Poison Dart', 'Crystal Orb',
+            'Wind Rush', 'Fire Bolt', 'Water Splash', 'Light Beam',
+            'Heavy Armor', 'Silent Hunter', 'Giant Slayer', 'Goblin Thief',
+            'Royal Knight', 'Fairy Dust', 'Mirror Image', 'Vampire Lord',
+            'Phoenix Feather', 'Frost Nova', 'Desert Wanderer', 'Jungle Beast',
+            'Mountain King', 'Ocean Caller', 'Star Gazer', 'Cosmic Energy'
         ];
 
+        // Tạo 100 thẻ bài với dữ liệu giả định
+        for (let i = 1; i <= 100; i++) {
+            const rarity = rarities[Math.floor(Math.random() * rarities.length)];
+            const title = cardTitles[Math.floor(Math.random() * cardTitles.length)];
+            const colorCode = Math.floor(Math.random()*16777215).toString(16); // Màu ngẫu nhiên cho ảnh placeholder
+
+            cardData.push({
+                id: i,
+                // Sử dụng kích thước thumbnail cho lưới (ví dụ: 150x200)
+                // và một ảnh lớn hơn cho fullscreen (ví dụ: 800x1200)
+                // Ở đây tôi dùng chung một URL placeholder, nhưng bạn nên tạo 2 URL khác nhau
+                image: `https://via.placeholder.com/150x200/${colorCode}/FFFFFF?text=Card+${i}`, // Thumbnail image
+                fullImage: `https://via.placeholder.com/800x1200/${colorCode}/FFFFFF?text=Card+${i}+Large`, // Fullscreen image
+                title: `${title} ${i}`,
+                description: `This is a detailed description for Card ${i}: ${title}. It belongs to the ${rarity} rarity and possesses unique abilities that are crucial in strategic gameplay. This card is known for its versatility and can turn the tide of battle with proper use. A must-have for any collector!`,
+                rarity: rarity
+            });
+        }
+
         const cardGrid = document.getElementById('cardGrid');
-        // scaleSlider và scaleValueSpan không còn cần thiết nếu header bị xóa
-        // const scaleSlider = document.getElementById('scaleSlider');
-        // const scaleValueSpan = document.getElementById('scaleValue');
 
         // Elements for the full-screen overlay
         const fullscreenOverlay = document.getElementById('fullscreenOverlay');
@@ -510,7 +360,7 @@
         function createCardElement(card) {
             const cardDiv = document.createElement('div');
             cardDiv.classList.add('card');
-            cardDiv.setAttribute('data-card-id', card.id); // Lưu ID thẻ để dễ dàng truy cập dữ liệu
+            cardDiv.setAttribute('data-card-id', card.id);
 
             cardDiv.innerHTML = `
                 <img src="${card.image}" alt="${card.title}" class="card-image">
@@ -519,7 +369,6 @@
                 <div class="card-rarity">${card.rarity}</div>
             `;
 
-            // Thêm sự kiện click vào thẻ bài
             cardDiv.addEventListener('click', () => {
                 showFullscreenCard(card);
             });
@@ -534,32 +383,24 @@
         }
 
         function showFullscreenCard(card) {
-            fullscreenCardImage.src = card.image;
+            // Sử dụng fullImage nếu có, nếu không thì dùng image (thumbnail)
+            fullscreenCardImage.src = card.fullImage || card.image;
             fullscreenCardImage.alt = card.title;
             fullscreenCardTitle.textContent = card.title;
             fullscreenCardDescription.textContent = card.description;
             fullscreenCardRarity.textContent = card.rarity;
 
-            fullscreenOverlay.classList.add('active'); // Hiển thị overlay
-            document.body.style.overflow = 'hidden'; // Ngăn cuộn body khi overlay mở
+            fullscreenOverlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
         }
 
         function hideFullscreenCard() {
-            fullscreenOverlay.classList.remove('active'); // Ẩn overlay
-            document.body.style.overflow = ''; // Cho phép body cuộn lại
+            fullscreenOverlay.classList.remove('active');
+            document.body.style.overflow = '';
         }
 
         // Khởi tạo hiển thị thẻ bài
         renderCards();
-
-        // Xử lý sự kiện thay đổi thanh trượt Scale - BỊ XÓA CÙNG VỚI HEADER
-        // scaleSlider.addEventListener('input', (event) => {
-        //     const value = parseFloat(event.target.value);
-        //     scaleValueSpan.textContent = `${value.toFixed(2)}x`;
-        // });
-
-        // Thiết lập giá trị ban đầu cho thanh trượt và hiển thị - BỊ XÓA CÙNG VỚI HEADER
-        // scaleValueSpan.textContent = `${parseFloat(scaleSlider.value).toFixed(2)}x`;
 
         // Xử lý nút đóng overlay
         closeCardButton.addEventListener('click', hideFullscreenCard);
