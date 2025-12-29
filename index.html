@@ -3,149 +3,446 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+    <title>Thư Viện Thẻ Bài AR</title>
     <style>
-        /* Đảm bảo html và body chiếm toàn bộ viewport */
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Ngăn chặn thanh cuộn xuất hiện */
-        }
-
+        /* CSS cho giao diện */
         body {
             font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #333; /* Nền tối giống ảnh */
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; /* Đảm bảo chiều cao tối thiểu */
+            overflow-x: hidden; /* Ngăn chặn cuộn ngang không mong muốn */
+        }
+
+        .header {
+            background-color: #222;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #555;
+            flex-shrink: 0; /* Không co lại */
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-icon {
+            font-size: 24px;
+            cursor: pointer;
+            color: #ccc;
+        }
+
+        .scale-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #ccc;
+        }
+
+        .scale-slider {
+            width: 80px;
+            -webkit-appearance: none;
+            height: 4px;
+            background: #555;
+            outline: none;
+            opacity: 0.7;
+            -webkit-transition: .2s;
+            transition: opacity .2s;
+            border-radius: 2px;
+        }
+
+        .scale-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+        }
+
+        .scale-slider::-moz-range-thumb {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #007bff;
+            cursor: pointer;
+        }
+
+        .scale-value {
+            font-size: 14px;
+            min-width: 45px; /* Đảm bảo không bị co khi giá trị thay đổi */
+            text-align: right;
+        }
+
+        .header-right {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-left: 20px;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            color: #eee;
+            flex-shrink: 0;
+        }
+
+        .card-grid-container {
+            flex-grow: 1; /* Cho phép vùng này mở rộng để lấp đầy không gian còn lại */
+            overflow-y: auto; /* Cho phép cuộn dọc */
+            padding: 0 20px 20px 20px; /* Thêm padding dưới để có khoảng trống khi cuộn */
+            -webkit-overflow-scrolling: touch; /* Cuộn mượt mà trên iOS */
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Cột linh hoạt */
+            gap: 15px; /* Khoảng cách giữa các thẻ */
+            justify-items: center; /* Căn giữa các thẻ trong ô của chúng */
+            align-items: start; /* Căn chỉnh các thẻ từ trên xuống */
+            padding-bottom: 20px; /* Khoảng trống ở cuối grid */
+        }
+
+        .card {
+            background-color: #1a1a1a;
+            border: 2px solid #5d4037; /* Màu viền thẻ bài */
+            border-radius: 8px;
+            padding: 5px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            background-color: #1a1a1a; /* Nền tối */
-            color: #e0e0e0; /* Chữ sáng */
-            position: relative; /* Quan trọng cho các thanh che phủ */
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            width: 100%; /* Chiếm toàn bộ chiều rộng ô grid */
+            max-width: 160px; /* Giới hạn kích thước tối đa của thẻ */
+            height: auto; /* Chiều cao tự động */
+            box-sizing: border-box; /* Bao gồm padding và border trong width/height */
         }
 
-        /* Ẩn tiêu đề và đoạn văn nếu không muốn chúng xuất hiện */
-        h1, p {
-            display: none;
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
         }
 
-        .sketchfab-container {
-            width: 100%; /* Chiếm toàn bộ chiều rộng của body */
-            height: 100%; /* Chiếm toàn bộ chiều cao của body */
-            border: none;
-            box-shadow: none;
-            border-radius: 0;
-            overflow: hidden;
-            background-color: #2b2b2b; /* Nền container tối */
-            padding: 0;
-            box-sizing: border-box;
-            z-index: 1; /* Đảm bảo iframe nằm dưới các thanh che phủ */
-            /* Để chứa div.sketchfab-embed-wrapper mới */
-            display: flex; /* Để iframe và p nằm trong wrapper có thể được căn chỉnh */
-            flex-direction: column; /* Sắp xếp iframe và p theo chiều dọc */
-        }
-
-        /* Thiết lập cho sketchfab-embed-wrapper mới */
-        .sketchfab-embed-wrapper {
+        .card-image {
             width: 100%;
-            height: 100%; /* Sẽ được điều chỉnh để nhường chỗ cho p */
-            display: flex;
-            flex-direction: column; /* Quan trọng: để iframe và p nằm dọc */
+            max-width: 150px; /* Kích thước tối đa cho hình ảnh trong thẻ */
+            height: auto;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            border: 1px solid #444; /* Viền mỏng cho ảnh */
         }
 
-        .sketchfab-embed-wrapper iframe {
-            flex-grow: 1; /* Cho phép iframe chiếm hết không gian còn lại */
-            width: 100%;
-            height: auto; /* Để flex-grow hoạt động hiệu quả hơn */
-            border: none;
-            display: block;
+        .card-title {
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #ffc107; /* Màu vàng cho tiêu đề */
+            margin-bottom: 5px;
         }
 
-        /* Ẩn thông tin dưới iframe trong đoạn mã nhúng mới */
-        .sketchfab-embed-wrapper p {
-            display: none !important; /* Quan trọng: dùng !important để ghi đè phong cách inline của Sketchfab */
+        .card-description {
+            font-size: 0.7em;
+            color: #bbb;
+            text-align: left;
+            padding: 0 5px;
+            margin-bottom: 5px;
+            max-height: 60px; /* Giới hạn chiều cao mô tả */
+            overflow: hidden; /* Ẩn phần văn bản thừa */
+            text-overflow: ellipsis; /* Hiển thị dấu ba chấm nếu bị cắt */
         }
 
-        /* ======================================================= */
-        /* CÁC THANH CHE PHỦ */
-        /* ======================================================= */
-        .overlay-bar {
-            position: fixed; /* Giữ vị trí cố định trên màn hình */
-            left: 0;
-            width: 100%; /* Kéo dài toàn bộ chiều rộng */
-            background-color: white; /* Màu trắng theo yêu cầu */
-            z-index: 999; /* Đảm bảo nó luôn nằm trên iframe và các nội dung khác */
-            box-sizing: border-box; /* Bao gồm padding/border vào width/height */
+        .card-rarity {
+            font-size: 0.8em;
+            color: #9c27b0; /* Màu tím cho độ hiếm */
+            font-weight: bold;
+            margin-top: auto; /* Đẩy xuống dưới cùng */
         }
 
-        .top-bar {
-            top: 0; /* Đặt ở trên cùng */
-            height: 55px; /* Chiều cao của thanh trên cùng (khoảng 110% của 50px) */
-            /* border-bottom: 1px solid #ccc; */ /* Có thể bỏ đường viền nếu muốn trơn hoàn toàn */
+        /* Thanh cuộn tùy chỉnh */
+        .card-grid-container::-webkit-scrollbar {
+            width: 8px;
         }
 
-        .bottom-bar {
-            bottom: 0; /* Đặt ở dưới cùng */
-            height: 55px; /* Chiều cao của thanh dưới cùng (khoảng 110% của 50px) */
-            /* border-top: 1px solid #ccc; */ /* Có thể bỏ đường viền nếu muốn trơn hoàn toàn */
+        .card-grid-container::-webkit-scrollbar-track {
+            background: #444;
+            border-radius: 4px;
         }
 
-        /* Media queries cho điện thoại */
-        @media (max-width: 768px) {
-            .top-bar, .bottom-bar {
-                height: 44px; /* Điều chỉnh chiều cao cho thiết bị di động (110% của 40px) */
+        .card-grid-container::-webkit-scrollbar-thumb {
+            background-color: #888;
+            border-radius: 4px;
+            border: 2px solid #444;
+        }
+
+        .card-grid-container::-webkit-scrollbar-thumb:hover {
+            background-color: #aaa;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .header {
+                padding: 8px 15px;
+            }
+
+            h1 {
+                font-size: 24px;
+                margin-left: 15px;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Nhỏ hơn trên di động */
+                gap: 10px;
+            }
+
+            .card {
+                max-width: 140px;
+            }
+
+            .card-title {
+                font-size: 0.8em;
+            }
+
+            .card-description {
+                font-size: 0.65em;
+            }
+
+            .scale-slider {
+                width: 60px;
+            }
+
+            .scale-value {
+                min-width: 35px;
             }
         }
+
+        @media (max-width: 400px) {
+            .card-grid {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+            }
+            .card {
+                max-width: 120px;
+            }
+        }
+
     </style>
 </head>
 <body>
+    <div class="header">
+        <div class="header-left">
+            <span class="dropdown-icon">&#9660;</span> <!-- Biểu tượng mũi tên xuống -->
+            <div class="scale-control">
+                <span>Scale</span>
+                <input type="range" min="0.1" max="0.5" value="0.18" step="0.01" class="scale-slider" id="scaleSlider">
+                <span class="scale-value" id="scaleValue">0.18x</span>
+            </div>
+        </div>
+        <div class="header-right">
+            <span>Play</span>
+        </div>
+    </div>
 
-    <!-- THANH CHE PHỦ TRÊN CÙNG -->
-    <div class="overlay-bar top-bar"></div>
+    <h1>LIBRARY</h1>
 
-    <!-- THANH CHE PHỦ DƯỚI CÙNG -->
-    <div class="overlay-bar bottom-bar"></div>
-
-    <!-- Thẻ audio cho nhạc nền -->
-    <!-- ĐỔI "your_background_music.mp3" thành đường dẫn đến file nhạc của bạn. -->
-    <!-- Thêm thuộc tính 'muted' để thử khắc phục vấn đề autoplay trên một số trình duyệt -->
-    <audio id="background-music" src="your_background_music.mp3" autoplay loop muted></audio>
-
-
-    <div class="sketchfab-container">
-        <!-- ĐOẠN MÃ NHÚNG MỚI TỪ SKETCHFAB ĐÃ ĐƯỢC THAY THẾ -->
-        <div class="sketchfab-embed-wrapper">
-            <iframe title="F39bccbe9e717a2d80bb8d0c7b46005e"
-                    frameborder="0"
-                    allowfullscreen
-                    mozallowfullscreen="true"
-                    webkitallowfullscreen="true"
-                    allow="autoplay; fullscreen; xr-spatial-tracking"
-                    xr-spatial-tracking
-                    execution-while-out-of-viewport
-                    execution-while-not-rendered
-                    web-share
-                    src="https://sketchfab.com/models/240f47fc6a42491f83fe6470eeae511e/embed?autostart=1&camera=0&preload=1&transparent=1&ui_theme=dark">
-            </iframe>
-            <!-- Thẻ p này sẽ được ẩn bằng CSS -->
-            <p style="font-size: 13px; font-weight: normal; margin: 5px; color: #4A4A4A;">
-                <a href="https://sketchfab.com/3d-models/f39bccbe9e717a2d80bb8d0c7b46005e-240f47fc6a42491f83fe6470eeae511e?utm_medium=embed&utm_campaign=share-popup&utm_content=240f47fc6a42491f83fe6470eeae511e" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> F39bccbe9e717a2d80bb8d0c7b46005e </a> by <a href="https://sketchfab.com/alex_nguyen_fh?utm_medium=embed&utm_campaign=share-popup&utm_content=240f47fc6a42491f83fe6470eeae511e" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;"> alex_nguyen_fh </a> on <a href="https://sketchfab.com?utm_medium=embed&utm_campaign=share-popup&utm_content=240f47fc6a42491f83fe6470eeae511e" target="_blank" rel="nofollow" style="font-weight: bold; color: #1CAAD9;">Sketchfab</a>
-            </p>
+    <div class="card-grid-container">
+        <div class="card-grid" id="cardGrid">
+            <!-- Thẻ bài sẽ được thêm vào đây bằng JavaScript -->
         </div>
     </div>
 
     <script>
-        const backgroundMusic = document.getElementById('background-music');
-
-        window.addEventListener('load', () => {
-            if (backgroundMusic) {
-                // Thử phát nhạc. Do thuộc tính 'muted' đã có, nó sẽ phát mà không cần tương tác người dùng.
-                backgroundMusic.play().catch(error => {
-                    console.warn("Autoplay for muted media was prevented (this is unexpected, check browser policies if it persists).", error);
-                });
+        // JavaScript để tạo và hiển thị thẻ bài
+        const cardData = [
+            {
+                id: 1,
+                image: 'https://via.placeholder.com/150x200?text=Card+1', // Sử dụng placeholder image
+                title: 'Card Title One',
+                description: 'This is a description for card number one. It provides some basic information about the card.',
+                rarity: 'Common'
+            },
+            {
+                id: 2,
+                image: 'https://via.placeholder.com/150x200?text=Card+2',
+                title: 'Mystic Warrior',
+                description: 'A fierce warrior from the enchanted forests, known for unparalleled agility.',
+                rarity: 'Rare'
+            },
+            {
+                id: 3,
+                image: 'https://via.placeholder.com/150x200?text=Card+3',
+                title: 'Dragon\'s Breath',
+                description: 'Unleash a fiery breath upon your enemies, dealing immense area damage.',
+                rarity: 'Epic'
+            },
+            {
+                id: 4,
+                image: 'https://via.placeholder.com/150x200?text=Card+4',
+                title: 'Healing Potion',
+                description: 'Restores a significant amount of health to a target ally. Essential for survival.',
+                rarity: 'Common'
+            },
+            {
+                id: 5,
+                image: 'https://via.placeholder.com/150x200?text=Card+5',
+                title: 'Shadow Assassin',
+                description: 'Strikes from the shadows, dealing critical damage to unsuspecting foes.',
+                rarity: 'Legendary'
+            },
+            {
+                id: 6,
+                image: 'https://via.placeholder.com/150x200?text=Card+6',
+                title: 'Guard Captain',
+                description: 'Leads the front line with unwavering courage and robust defenses.',
+                rarity: 'Uncommon'
+            },
+            {
+                id: 7,
+                image: 'https://via.placeholder.com/150x200?text=Card+7',
+                title: 'Sorcerer Supreme',
+                description: 'Wields ancient magic with devastating effects, controlling the battlefield.',
+                rarity: 'Epic'
+            },
+            {
+                id: 8,
+                image: 'https://via.placeholder.com/150x200?text=Card+8',
+                title: 'Iron Golem',
+                description: 'A colossal guardian with impenetrable armor, protecting its allies.',
+                rarity: 'Rare'
+            },
+            {
+                id: 9,
+                image: 'https://via.placeholder.com/150x200?text=Card+9',
+                title: 'Archer Elite',
+                description: 'Precise shots from a distance, never missing its mark.',
+                rarity: 'Uncommon'
+            },
+            {
+                id: 10,
+                image: 'https://via.placeholder.com/150x200?text=Card+10',
+                title: 'Time Warp',
+                description: 'Manipulates time to gain an advantage, slowing enemies or speeding allies.',
+                rarity: 'Legendary'
+            },
+            {
+                id: 11,
+                image: 'https://via.placeholder.com/150x200?text=Card+11',
+                title: 'Spirit Wolf',
+                description: 'A loyal companion that attacks enemies with spectral claws.',
+                rarity: 'Common'
+            },
+            {
+                id: 12,
+                image: 'https://via.placeholder.com/150x200?text=Card+12',
+                title: 'Flame Aura',
+                description: 'Surrounds the caster with a burning aura, damaging nearby enemies.',
+                rarity: 'Rare'
+            },
+            // Thêm nhiều thẻ bài khác ở đây để có thanh cuộn
+            {
+                id: 13,
+                image: 'https://via.placeholder.com/150x200?text=Card+13',
+                title: 'Ice Shard',
+                description: 'Launches a sharp shard of ice, freezing the target in place.',
+                rarity: 'Common'
+            },
+            {
+                id: 14,
+                image: 'https://via.placeholder.com/150x200?text=Card+14',
+                title: 'Thunder Strike',
+                description: 'Calls down a powerful lightning bolt, striking a single enemy.',
+                rarity: 'Epic'
+            },
+            {
+                id: 15,
+                image: 'https://via.placeholder.com/150x200?text=Card+15',
+                title: 'Forest Nymph',
+                description: 'Heals and buffs allies with nature\'s magic, elusive and swift.',
+                rarity: 'Uncommon'
+            },
+            {
+                id: 16,
+                image: 'https://via.placeholder.com/150x200?text=Card+16',
+                title: 'Void Walker',
+                description: 'Teleports across the battlefield, leaving enemies disoriented.',
+                rarity: 'Legendary'
+            },
+            {
+                id: 17,
+                image: 'https://via.placeholder.com/150x200?text=Card+17',
+                title: 'Stone Wall',
+                description: 'Summons a durable stone wall to block enemy advances.',
+                rarity: 'Common'
+            },
+            {
+                id: 18,
+                image: 'https://via.placeholder.com/150x200?text=Card+18',
+                title: 'Sun Priestess',
+                description: 'Channels divine light to smite evil and protect the innocent.',
+                rarity: 'Rare'
+            },
+            {
+                id: 19,
+                image: 'https://via.placeholder.com/150x200?text=Card+19',
+                title: 'Berserker Rage',
+                description: 'Enters a state of furious combat, increasing attack speed and damage.',
+                rarity: 'Uncommon'
+            },
+            {
+                id: 20,
+                image: 'https://via.placeholder.com/150x200?text=Card+20',
+                title: 'Celestial Guardian',
+                description: 'A protector from the heavens, impervious to most forms of attack.',
+                rarity: 'Epic'
             }
+        ];
+
+        const cardGrid = document.getElementById('cardGrid');
+        const scaleSlider = document.getElementById('scaleSlider');
+        const scaleValueSpan = document.getElementById('scaleValue');
+
+        function createCardElement(card) {
+            const cardDiv = document.createElement('div');
+            cardDiv.classList.add('card');
+            cardDiv.innerHTML = `
+                <img src="${card.image}" alt="${card.title}" class="card-image">
+                <div class="card-title">${card.title}</div>
+                <div class="card-description">${card.description}</div>
+                <div class="card-rarity">${card.rarity}</div>
+            `;
+            return cardDiv;
+        }
+
+        function renderCards() {
+            cardData.forEach(card => {
+                cardGrid.appendChild(createCardElement(card));
+            });
+        }
+
+        // Khởi tạo hiển thị thẻ bài
+        renderCards();
+
+        // Xử lý sự kiện thay đổi thanh trượt Scale
+        scaleSlider.addEventListener('input', (event) => {
+            const value = parseFloat(event.target.value);
+            scaleValueSpan.textContent = `${value.toFixed(2)}x`;
+            // Bạn có thể thêm logic ở đây để thực sự thay đổi kích thước thẻ bài
+            // Ví dụ: cardGrid.style.transform = `scale(${value / 0.18})`; // Cần điều chỉnh lại logic scale cho phù hợp
+            // Hoặc thay đổi thuộc tính CSS của các thẻ bài, nhưng điều này phức tạp hơn
+            // Đối với giao diện này, thanh trượt chỉ hiển thị giá trị, không thực sự scale các phần tử
         });
+
+        // Thiết lập giá trị ban đầu cho thanh trượt và hiển thị
+        scaleValueSpan.textContent = `${parseFloat(scaleSlider.value).toFixed(2)}x`;
     </script>
 </body>
 </html>
