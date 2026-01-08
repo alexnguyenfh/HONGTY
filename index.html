@@ -1,416 +1,148 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thư Viện 100 Thẻ Bài AR</title>
-    <style>
-        /* CSS cho giao diện */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #333; /* Nền tối giống ảnh */
-            color: #eee;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh; /* Đảm bảo chiều cao tối thiểu */
-            overflow-x: hidden; /* Ngăn chặn cuộn ngang không mong muốn */
-            position: relative; /* Quan trọng cho overlay */
-        }
+Privacy Policy
+Last updated: January 08, 2026
 
-        h1 {
-            font-size: 28px;
-            margin-left: 20px;
-            margin-top: 15px; /* Giảm margin top để tiêu đề gần cạnh trên hơn */
-            margin-bottom: 15px;
-            color: #eee;
-            flex-shrink: 0;
-        }
+This Privacy Policy describes Our policies and procedures on the collection, use and disclosure of Your information when You use the Service and tells You about Your privacy rights and how the law protects You.
 
-        .card-grid-container {
-            flex-grow: 1; /* Cho phép vùng này mở rộng để lấp đầy không gian còn lại */
-            overflow-y: auto; /* Cho phép cuộn dọc */
-            padding: 0 20px 20px 20px; /* Thêm padding dưới để có khoảng trống khi cuộn */
-            -webkit-overflow-scrolling: touch; /* Cuộn mượt mà trên iOS */
-        }
+We use Your Personal data to provide and improve the Service. By using the Service, You agree to the collection and use of information in accordance with this Privacy Policy. This Privacy Policy has been created with the help of the Privacy Policy Generator.
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); /* Cột linh hoạt */
-            gap: 15px; /* Khoảng cách giữa các thẻ */
-            justify-items: center; /* Căn giữa các thẻ trong ô của chúng */
-            align-items: start; /* Căn chỉnh các thẻ từ trên xuống */
-            padding-bottom: 20px; /* Khoảng trống ở cuối grid */
-        }
+Interpretation and Definitions
+Interpretation
+The words whose initial letters are capitalized have meanings defined under the following conditions. The following definitions shall have the same meaning regardless of whether they appear in singular or in plural.
 
-        .card {
-            background-color: #1a1a1a;
-            border: 2px solid #5d4037; /* Màu viền thẻ bài */
-            border-radius: 8px;
-            padding: 5px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            width: 100%; /* Chiếm toàn bộ chiều rộng ô grid */
-            max-width: 160px; /* Giới hạn kích thước tối đa của thẻ */
-            height: auto; /* Chiều cao tự động */
-            box-sizing: border-box; /* Bao gồm padding và border trong width/height */
-            cursor: pointer; /* Hiển thị con trỏ là bàn tay để chỉ ra có thể nhấp */
-        }
+Definitions
+For the purposes of this Privacy Policy:
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.6);
-        }
+Account means a unique account created for You to access our Service or parts of our Service.
 
-        .card-image {
-            width: 100%;
-            max-width: 150px; /* Kích thước tối đa cho hình ảnh trong thẻ */
-            height: auto;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            border: 1px solid #444; /* Viền mỏng cho ảnh */
-        }
+Affiliate means an entity that controls, is controlled by, or is under common control with a party, where "control" means ownership of 50% or more of the shares, equity interest or other securities entitled to vote for election of directors or other managing authority.
 
-        .card-title {
-            font-size: 0.9em;
-            font-weight: bold;
-            color: #ffc107; /* Màu vàng cho tiêu đề */
-            margin-bottom: 5px;
-        }
+Application refers to ARWORLD, the software program provided by the Company.
 
-        .card-description {
-            font-size: 0.7em;
-            color: #bbb;
-            text-align: left;
-            padding: 0 5px;
-            margin-bottom: 5px;
-            max-height: 60px; /* Giới hạn chiều cao mô tả */
-            overflow: hidden; /* Ẩn phần văn bản thừa */
-            text-overflow: ellipsis; /* Hiển thị dấu ba chấm nếu bị cắt */
-        }
+Company (referred to as either "the Company", "We", "Us" or "Our" in this Agreement) refers to ARWORLD.
 
-        .card-rarity {
-            font-size: 0.8em;
-            color: #9c27b0; /* Màu tím cho độ hiếm */
-            font-weight: bold;
-            margin-top: auto; /* Đẩy xuống dưới cùng */
-        }
+Country refers to: Vietnam
 
-        /* Thanh cuộn tùy chỉnh */
-        .card-grid-container::-webkit-scrollbar {
-            width: 8px;
-        }
+Device means any device that can access the Service such as a computer, a cell phone or a digital tablet.
 
-        .card-grid-container::-webkit-scrollbar-track {
-            background: #444;
-            border-radius: 4px;
-        }
+Personal Data is any information that relates to an identified or identifiable individual.
 
-        .card-grid-container::-webkit-scrollbar-thumb {
-            background-color: #888;
-            border-radius: 4px;
-            border: 2px solid #444;
-        }
+Service refers to the Application.
 
-        .card-grid-container::-webkit-scrollbar-thumb:hover {
-            background-color: #aaa;
-        }
+Service Provider means any natural or legal person who processes the data on behalf of the Company. It refers to third-party companies or individuals employed by the Company to facilitate the Service, to provide the Service on behalf of the Company, to perform services related to the Service or to assist the Company in analyzing how the Service is used.
 
-        /* Responsive adjustments */
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 24px;
-                margin-left: 15px;
-            }
+Usage Data refers to data collected automatically, either generated by the use of the Service or from the Service infrastructure itself (for example, the duration of a page visit).
 
-            .card-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); /* Nhỏ hơn trên di động */
-                gap: 10px;
-            }
+You means the individual accessing or using the Service, or the company, or other legal entity on behalf of which such individual is accessing or using the Service, as applicable.
 
-            .card {
-                max-width: 140px;
-            }
+Collecting and Using Your Personal Data
+Types of Data Collected
+Personal Data
+While using Our Service, We may ask You to provide Us with certain personally identifiable information that can be used to contact or identify You. Personally identifiable information may include, but is not limited to:
 
-            .card-title {
-                font-size: 0.8em;
-            }
+Usage Data
+Usage Data
+Usage Data is collected automatically when using the Service.
 
-            .card-description {
-                font-size: 0.65em;
-            }
-        }
+Usage Data may include information such as Your Device's Internet Protocol address (e.g. IP address), browser type, browser version, the pages of our Service that You visit, the time and date of Your visit, the time spent on those pages, unique device identifiers and other diagnostic data.
 
-        @media (max-width: 400px) {
-            .card-grid {
-                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
-            }
-            .card {
-                max-width: 120px;
-            }
-        }
+When You access the Service by or through a mobile device, We may collect certain information automatically, including, but not limited to, the type of mobile device You use, Your mobile device's unique ID, the IP address of Your mobile device, Your mobile operating system, the type of mobile Internet browser You use, unique device identifiers and other diagnostic data.
 
-        /* --- Full-screen Card Overlay (Modal) --- */
-        .fullscreen-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.9); /* Nền mờ tối */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000; /* Đảm bảo nó nằm trên tất cả các yếu tố khác */
-            opacity: 0; /* Mặc định ẩn */
-            visibility: hidden; /* Mặc định ẩn */
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
+We may also collect information that Your browser sends whenever You visit Our Service or when You access the Service by or through a mobile device.
 
-        .fullscreen-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+Use of Your Personal Data
+The Company may use Personal Data for the following purposes:
 
-        .fullscreen-card {
-            background-color: #1a1a1a;
-            border: 4px solid #5d4037; /* Viền dày hơn */
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.8);
-            max-width: 90%; /* Giới hạn chiều rộng trên màn hình lớn */
-            max-height: 90%; /* Giới hạn chiều cao */
-            width: 350px; /* Chiều rộng mặc định cho thẻ lớn */
-            height: auto;
-            box-sizing: border-box;
-            position: relative;
-            transform: scale(0.8); /* Bắt đầu nhỏ hơn một chút */
-            transition: transform 0.3s ease;
-            overflow-y: auto; /* Cho phép cuộn nếu nội dung quá dài */
-        }
+To provide and maintain our Service, including to monitor the usage of our Service.
 
-        .fullscreen-overlay.active .fullscreen-card {
-            transform: scale(1); /* Phóng to ra */
-        }
+To manage Your Account: to manage Your registration as a user of the Service. The Personal Data You provide can give You access to different functionalities of the Service that are available to You as a registered user.
 
-        .fullscreen-card-image {
-            width: 100%;
-            max-width: 300px; /* Kích thước hình ảnh lớn hơn */
-            height: auto;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 2px solid #666;
-        }
+For the performance of a contract: the development, compliance and undertaking of the purchase contract for the products, items or services You have purchased or of any other contract with Us through the Service.
 
-        .fullscreen-card-title {
-            font-size: 1.8em;
-            font-weight: bold;
-            color: #ffc107;
-            margin-bottom: 10px;
-        }
+To contact You: To contact You by email, telephone calls, SMS, or other equivalent forms of electronic communication, such as a mobile application's push notifications regarding updates or informative communications related to the functionalities, products or contracted services, including the security updates, when necessary or reasonable for their implementation.
 
-        .fullscreen-card-description {
-            font-size: 1.1em;
-            color: #ccc;
-            text-align: justify; /* Căn đều hai bên cho mô tả */
-            padding: 0 10px;
-            margin-bottom: 15px;
-            line-height: 1.4;
-        }
+To provide You with news, special offers, and general information about other goods, services and events which We offer that are similar to those that you have already purchased or inquired about unless You have opted not to receive such information.
 
-        .fullscreen-card-rarity {
-            font-size: 1.2em;
-            color: #9c27b0;
-            font-weight: bold;
-            margin-top: 10px;
-        }
+To manage Your requests: To attend and manage Your requests to Us.
 
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 2em;
-            cursor: pointer;
-            padding: 5px;
-            line-height: 1;
-            opacity: 0.7;
-            transition: opacity 0.2s ease;
-        }
+For business transfers: We may use Your information to evaluate or conduct a merger, divestiture, restructuring, reorganization, dissolution, or other sale or transfer of some or all of Our assets, whether as a going concern or as part of bankruptcy, liquidation, or similar proceeding, in which Personal Data held by Us about our Service users is among the assets transferred.
 
-        .close-button:hover {
-            opacity: 1;
-        }
+For other purposes: We may use Your information for other purposes, such as data analysis, identifying usage trends, determining the effectiveness of our promotional campaigns and to evaluate and improve our Service, products, services, marketing and your experience.
 
-        /* Responsive cho thẻ toàn màn hình */
-        @media (max-width: 768px) {
-            .fullscreen-card {
-                max-width: 95%;
-                width: auto; /* Cho phép nó mở rộng hơn trên di động */
-                max-height: 95%;
-                padding: 10px;
-                border-width: 2px;
-            }
+We may share Your personal information in the following situations:
 
-            .fullscreen-card-image {
-                max-width: 90%;
-            }
+With Service Providers: We may share Your personal information with Service Providers to monitor and analyze the use of our Service, to contact You.
+For business transfers: We may share or transfer Your personal information in connection with, or during negotiations of, any merger, sale of Company assets, financing, or acquisition of all or a portion of Our business to another company.
+With Affiliates: We may share Your information with Our affiliates, in which case we will require those affiliates to honor this Privacy Policy. Affiliates include Our parent company and any other subsidiaries, joint venture partners or other companies that We control or that are under common control with Us.
+With business partners: We may share Your information with Our business partners to offer You certain products, services or promotions.
+With other users: when You share personal information or otherwise interact in the public areas with other users, such information may be viewed by all users and may be publicly distributed outside.
+With Your consent: We may disclose Your personal information for any other purpose with Your consent.
+Retention of Your Personal Data
+The Company will retain Your Personal Data only for as long as is necessary for the purposes set out in this Privacy Policy. We will retain and use Your Personal Data to the extent necessary to comply with our legal obligations (for example, if we are required to retain your data to comply with applicable laws), resolve disputes, and enforce our legal agreements and policies.
 
-            .fullscreen-card-title {
-                font-size: 1.5em;
-            }
+The Company will also retain Usage Data for internal analysis purposes. Usage Data is generally retained for a shorter period of time, except when this data is used to strengthen the security or to improve the functionality of Our Service, or We are legally obligated to retain this data for longer periods.
 
-            .fullscreen-card-description {
-                font-size: 1em;
-                padding: 0 5px;
-            }
+Transfer of Your Personal Data
+Your information, including Personal Data, is processed at the Company's operating offices and in any other places where the parties involved in the processing are located. It means that this information may be transferred to — and maintained on — computers located outside of Your state, province, country or other governmental jurisdiction where the data protection laws may differ from those from Your jurisdiction.
 
-            .fullscreen-card-rarity {
-                font-size: 1em;
-            }
+Your consent to this Privacy Policy followed by Your submission of such information represents Your agreement to that transfer.
 
-            .close-button {
-                font-size: 1.8em;
-                top: 5px;
-                right: 10px;
-            }
-        }
-    </style>
-</head>
-<body>
-    <h1>LIBRARY</h1>
+The Company will take all steps reasonably necessary to ensure that Your data is treated securely and in accordance with this Privacy Policy and no transfer of Your Personal Data will take place to an organization or a country unless there are adequate controls in place including the security of Your data and other personal information.
 
-    <div class="card-grid-container">
-        <div class="card-grid" id="cardGrid">
-            <!-- Thẻ bài sẽ được thêm vào đây bằng JavaScript -->
-        </div>
-    </div>
+Delete Your Personal Data
+You have the right to delete or request that We assist in deleting the Personal Data that We have collected about You.
 
-    <!-- Full-screen Card Overlay (Modal) -->
-    <div class="fullscreen-overlay" id="fullscreenOverlay">
-        <div class="fullscreen-card" id="fullscreenCard">
-            <button class="close-button" id="closeCardButton">&times;</button>
-            <img src="" alt="" class="fullscreen-card-image" id="fullscreenCardImage">
-            <div class="fullscreen-card-title" id="fullscreenCardTitle"></div>
-            <div class="fullscreen-card-description" id="fullscreenCardDescription"></div>
-            <div class="fullscreen-card-rarity" id="fullscreenCardRarity"></div>
-        </div>
-    </div>
+Our Service may give You the ability to delete certain information about You from within the Service.
 
-    <script>
-        // JavaScript để tạo và hiển thị thẻ bài
-        const cardData = []; // Mảng rỗng để chứa dữ liệu 100 thẻ bài
+You may update, amend, or delete Your information at any time by signing in to Your Account, if you have one, and visiting the account settings section that allows you to manage Your personal information. You may also contact Us to request access to, correct, or delete any personal information that You have provided to Us.
 
-        const rarities = ['Common', 'Uncommon', 'Rare', 'Epic', 'Legendary'];
-        const cardTitles = [
-            'Mystic Warrior', 'Dragon\'s Breath', 'Healing Potion', 'Shadow Assassin',
-            'Guard Captain', 'Sorcerer Supreme', 'Iron Golem', 'Archer Elite',
-            'Time Warp', 'Spirit Wolf', 'Flame Aura', 'Ice Shard',
-            'Thunder Strike', 'Forest Nymph', 'Void Walker', 'Stone Wall',
-            'Sun Priestess', 'Berserker Rage', 'Celestial Guardian', 'Ancient Rune',
-            'Swift Blade', 'Earth Shield', 'Mana Burst', 'Holy Smite',
-            'Dark Pact', 'Elixir of Life', 'Poison Dart', 'Crystal Orb',
-            'Wind Rush', 'Fire Bolt', 'Water Splash', 'Light Beam',
-            'Heavy Armor', 'Silent Hunter', 'Giant Slayer', 'Goblin Thief',
-            'Royal Knight', 'Fairy Dust', 'Mirror Image', 'Vampire Lord',
-            'Phoenix Feather', 'Frost Nova', 'Desert Wanderer', 'Jungle Beast',
-            'Mountain King', 'Ocean Caller', 'Star Gazer', 'Cosmic Energy'
-        ];
+Please note, however, that We may need to retain certain information when we have a legal obligation or lawful basis to do so.
 
-        // Tạo 100 thẻ bài với dữ liệu giả định
-        for (let i = 1; i <= 100; i++) {
-            const rarity = rarities[Math.floor(Math.random() * rarities.length)];
-            const title = cardTitles[Math.floor(Math.random() * cardTitles.length)];
-            const colorCode = Math.floor(Math.random()*16777215).toString(16); // Màu ngẫu nhiên cho ảnh placeholder
+Disclosure of Your Personal Data
+Business Transactions
+If the Company is involved in a merger, acquisition or asset sale, Your Personal Data may be transferred. We will provide notice before Your Personal Data is transferred and becomes subject to a different Privacy Policy.
 
-            cardData.push({
-                id: i,
-                // Sử dụng kích thước thumbnail cho lưới (ví dụ: 150x200)
-                // và một ảnh lớn hơn cho fullscreen (ví dụ: 800x1200)
-                // Ở đây tôi dùng chung một URL placeholder, nhưng bạn nên tạo 2 URL khác nhau
-                image: `https://via.placeholder.com/150x200/${colorCode}/FFFFFF?text=Card+${i}`, // Thumbnail image
-                fullImage: `https://via.placeholder.com/800x1200/${colorCode}/FFFFFF?text=Card+${i}+Large`, // Fullscreen image
-                title: `${title} ${i}`,
-                description: `This is a detailed description for Card ${i}: ${title}. It belongs to the ${rarity} rarity and possesses unique abilities that are crucial in strategic gameplay. This card is known for its versatility and can turn the tide of battle with proper use. A must-have for any collector!`,
-                rarity: rarity
-            });
-        }
+Law enforcement
+Under certain circumstances, the Company may be required to disclose Your Personal Data if required to do so by law or in response to valid requests by public authorities (e.g. a court or a government agency).
 
-        const cardGrid = document.getElementById('cardGrid');
+Other legal requirements
+The Company may disclose Your Personal Data in the good faith belief that such action is necessary to:
 
-        // Elements for the full-screen overlay
-        const fullscreenOverlay = document.getElementById('fullscreenOverlay');
-        const fullscreenCardImage = document.getElementById('fullscreenCardImage');
-        const fullscreenCardTitle = document.getElementById('fullscreenCardTitle');
-        const fullscreenCardDescription = document.getElementById('fullscreenCardDescription');
-        const fullscreenCardRarity = document.getElementById('fullscreenCardRarity');
-        const closeCardButton = document.getElementById('closeCardButton');
+Comply with a legal obligation
+Protect and defend the rights or property of the Company
+Prevent or investigate possible wrongdoing in connection with the Service
+Protect the personal safety of Users of the Service or the public
+Protect against legal liability
+Security of Your Personal Data
+The security of Your Personal Data is important to Us, but remember that no method of transmission over the Internet, or method of electronic storage is 100% secure. While We strive to use commercially reasonable means to protect Your Personal Data, We cannot guarantee its absolute security.
 
-        function createCardElement(card) {
-            const cardDiv = document.createElement('div');
-            cardDiv.classList.add('card');
-            cardDiv.setAttribute('data-card-id', card.id);
+Detailed Information on the Processing of Your Personal Data
+The Service Providers We use may have access to Your Personal Data. These third-party vendors collect, store, use, process and transfer information about Your activity on Our Service in accordance with their Privacy Policies.
 
-            cardDiv.innerHTML = `
-                <img src="${card.image}" alt="${card.title}" class="card-image">
-                <div class="card-title">${card.title}</div>
-                <div class="card-description">${card.description}</div>
-                <div class="card-rarity">${card.rarity}</div>
-            `;
+Usage, Performance and Miscellaneous
+We may use third-party Service Providers to maintain and improve our Service.
 
-            cardDiv.addEventListener('click', () => {
-                showFullscreenCard(card);
-            });
+ARWORLD
 
-            return cardDiv;
-        }
+Their Privacy Policy can be viewed at https://docs.google.com/document/d/1zucHF_8S8kpf7ig4CrcMmQnPR9JXVyKsrXpp507YVtI/edit?usp=sharing
 
-        function renderCards() {
-            cardData.forEach(card => {
-                cardGrid.appendChild(createCardElement(card));
-            });
-        }
+Children's Privacy
+Our Service does not address anyone under the age of 13. We do not knowingly collect personally identifiable information from anyone under the age of 13. If You are a parent or guardian and You are aware that Your child has provided Us with Personal Data, please contact Us. If We become aware that We have collected Personal Data from anyone under the age of 13 without verification of parental consent, We take steps to remove that information from Our servers.
 
-        function showFullscreenCard(card) {
-            // Sử dụng fullImage nếu có, nếu không thì dùng image (thumbnail)
-            fullscreenCardImage.src = card.fullImage || card.image;
-            fullscreenCardImage.alt = card.title;
-            fullscreenCardTitle.textContent = card.title;
-            fullscreenCardDescription.textContent = card.description;
-            fullscreenCardRarity.textContent = card.rarity;
+If We need to rely on consent as a legal basis for processing Your information and Your country requires consent from a parent, We may require Your parent's consent before We collect and use that information.
 
-            fullscreenOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+Links to Other Websites
+Our Service may contain links to other websites that are not operated by Us. If You click on a third party link, You will be directed to that third party's site. We strongly advise You to review the Privacy Policy of every site You visit.
 
-        function hideFullscreenCard() {
-            fullscreenOverlay.classList.remove('active');
-            document.body.style.overflow = '';
-        }
+We have no control over and assume no responsibility for the content, privacy policies or practices of any third party sites or services.
 
-        // Khởi tạo hiển thị thẻ bài
-        renderCards();
+Changes to this Privacy Policy
+We may update Our Privacy Policy from time to time. We will notify You of any changes by posting the new Privacy Policy on this page.
 
-        // Xử lý nút đóng overlay
-        closeCardButton.addEventListener('click', hideFullscreenCard);
+We will let You know via email and/or a prominent notice on Our Service, prior to the change becoming effective and update the "Last updated" date at the top of this Privacy Policy.
 
-        // Đóng overlay khi nhấp vào vùng nền đen bên ngoài thẻ bài
-        fullscreenOverlay.addEventListener('click', (event) => {
-            if (event.target === fullscreenOverlay) {
-                hideFullscreenCard();
-            }
-        });
-    </script>
-</body>
-</html>
+You are advised to review this Privacy Policy periodically for any changes. Changes to this Privacy Policy are effective when they are posted on this page.
+
+Contact Us
+If you have any questions about this Privacy Policy, You can contact us:
+
+By email: [email protected]
